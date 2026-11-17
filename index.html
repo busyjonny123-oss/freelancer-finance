@@ -2124,6 +2124,7 @@
       renderTrendBarChart();
     }
 
+    /* 依付款單位 / 家長自動分組，並支援一鍵全額入帳 */
     function renderPendingReceivablesList() {
       const container = document.getElementById('pendingPaymentsContainer');
       if (!container) return;
@@ -2141,21 +2142,83 @@
         return;
       }
 
-      container.innerHTML = unpaidList.map(item => {
+      // 依付款單位 (payer) 或標題 (title) 聚合分組
+      const groupMap = {};
+      unpaidList.forEach(item => {
+        const groupKey = (item.payer && item.payer.trim()) ? item.payer.trim() : item.title;
+        if (!groupMap[groupKey]) {
+          groupMap[groupKey] = {
+            name: groupKey,
+            totalAmount: 0,
+            records: [],
+            itemTitles: new Set()
+          };
+        }
+        groupMap[groupKey].totalAmount += Number(item.amount || 0);
+        groupMap[groupKey].records.push(item);
+        groupMap[groupKey].itemTitles.add(item.title);
+      });
+
+      container.innerHTML = Object.values(groupMap).map(g => {
+        const safeKey = encodeURIComponent(g.name);
+        const detailSummary = Array.from(g.itemTitles).join('、');
+
         return `
-          <div class="bg-white p-3.5 rounded-xl border border-amber-200/90 shadow-2xs flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <span class="text-[10px] text-slate-400 block">${item.date}</span>
-              <h5 class="text-xs font-bold text-slate-900 truncate">${escapeHtml(item.title)}</h5>
-              ${item.payer ? `<span class="text-[10px] text-teal-700 font-medium block">${escapeHtml(item.payer)}</span>` : ''}
-              <span class="text-xs font-bold text-amber-700">NT$ ${Number(item.amount).toLocaleString()}</span>
+          <div class="bg-white p-4 rounded-xl border border-amber-200/90 shadow-2xs flex flex-col justify-between gap-3">
+            <div>
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-semibold">
+                    ${g.records.length} 筆待結算
+                  </span>
+                  <h5 class="text-sm font-bold text-slate-900 mt-1">${escapeHtml(g.name)}</h5>
+                </div>
+                <span class="text-base font-bold text-amber-700 font-mono">
+                  NT$ ${g.totalAmount.toLocaleString()}
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-1">
+                包含：${escapeHtml(detailSummary)}
+              </p>
             </div>
-            <button onclick="toggleRecordPaymentStatus('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-xs shrink-0 transition">
-              入帳
-            </button>
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-end">
+              <button type="button" onclick="settleGroupAll('${safeKey}')" class="w-full py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition flex items-center justify-center gap-1">
+                <span>⚡ 一鍵全額入帳 (共 NT$ ${g.totalAmount.toLocaleString()})</span>
+              </button>
+            </div>
           </div>
         `;
       }).join('');
+    }
+
+    /* 一鍵結清同一人/公司的全部待收款項 */
+    function settleGroupAll(encodedName) {
+      const targetName = decodeURIComponent(encodedName);
+      
+      // 找出該分組所有未入帳項目
+      const targets = records.filter(r => {
+        if (r.status !== 'unpaid') return false;
+        const groupKey = (r.payer && r.payer.trim()) ? r.payer.trim() : r.title;
+        return groupKey === targetName;
+      });
+
+      if (targets.length === 0) return;
+
+      const sum = targets.reduce((acc, cur) => acc + Number(cur.amount || 0), 0);
+      const confirmSettle = window.confirm(`確認已收到【${targetName}】的全部款項嗎？\n\n共 ${targets.length} 筆紀錄，合計金額：NT$ ${sum.toLocaleString()} 元。\n點擊「確定」後將一次全數標記為已入帳。`);
+
+      if (confirmSettle) {
+        targets.forEach(r => {
+          r.status = 'paid';
+        });
+
+        saveRecords();
+        showToast(`已成功結清【${targetName}】全部款項共 NT$ ${sum.toLocaleString()}`, 'success');
+
+        renderDashboard();
+        if (currentActiveTab === 'records') renderRecordsTable();
+        if (currentActiveTab === 'analytics') renderAnalyticsView();
+      }
     }
 
     function renderCategoryDoughnut() {
