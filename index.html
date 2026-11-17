@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Finance Manager</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ========================================== -->
+  <!-- ★ 自訂配色中心 (在這裡自由更換 HEX 色碼) ★ -->
+  <!-- ========================================== -->
+  <style>
+    :root {
+      /* 主色系：頂部導覽列、家教專區、首頁按鈕 */
+      --primary: #2563eb;          /* 可改為你喜歡的色碼，如 #18181b (黑), #0d9488 (藍綠) */
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-text: #1e40af;
+
+      /* 游泳專區專屬色 */
+      --swim: #0891b2;
+      --swim-hover: #0e7490;
+      --swim-light: #ecfeff;
+      --swim-text: #155e75;
+
+      /* 成功 / 續報 / 已入帳狀態色 */
+      --success: #059669;
+      --success-hover: #047857;
+      --success-light: #ecfdf5;
+      --success-text: #065f46;
+
+      /* 待收款 / 警告狀態色 */
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --warning-text: #92400e;
+
+      /* 背景底色 */
+      --bg-main: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* 套用主題色之樣式類別 */
+    .theme-header { background-color: var(--primary); }
+    .theme-nav-active { border-color: var(--primary) !important; color: var(--primary) !important; }
+    .btn-primary { background-color: var(--primary); color: #fff; }
+    .btn-primary:hover { background-color: var(--primary-hover); }
+    .badge-primary { background-color: var(--primary-light); color: var(--primary-text); }
+
+    .btn-swim { background-color: var(--swim); color: #fff; }
+    .btn-swim:hover { background-color: var(--swim-hover); }
+    .badge-swim { background-color: var(--swim-light); color: var(--swim-text); }
+    .progress-swim { background-color: var(--swim); }
+
+    .btn-success { background-color: var(--success); color: #fff; }
+    .btn-success:hover { background-color: var(--success-hover); }
+    .badge-success { background-color: var(--success-light); color: var(--success-text); }
+
+    .badge-warning { background-color: var(--warning-light); color: var(--warning-text); border: 1px solid #fde68a; }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="theme-header text-white sticky top-0 z-30 shadow-xs transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-wallet text-base"></i>
+        <span class="font-semibold tracking-tight text-sm sm:text-base">Finance Manager</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="exportData()" class="text-xs bg-black/15 hover:bg-black/25 px-2.5 py-1.5 rounded-md transition">
+          <i class="fa-solid fa-download mr-1"></i>備份
+        </button>
+        <label class="text-xs bg-black/15 hover:bg-black/25 px-2.5 py-1.5 rounded-md cursor-pointer transition">
+          <i class="fa-solid fa-upload mr-1"></i>匯入
+          <input type="file" id="importInput" accept=".json" class="hidden" onchange="importData(event)">
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation (5個專屬清晰分頁) -->
+  <nav class="bg-white border-b border-slate-200 sticky top-11 z-20 shadow-2xs">
+    <div class="max-w-5xl mx-auto px-3 flex space-x-5 sm:space-x-8 overflow-x-auto hide-scrollbar text-sm font-medium">
+      <button onclick="switchTab('home')" id="tab-home" class="tab-btn py-3 border-b-2 theme-nav-active whitespace-nowrap">
+        首頁概況
+      </button>
+      <button onclick="switchTab('tutoring')" id="tab-tutoring" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">
+        📚 家教
+      </button>
+      <button onclick="switchTab('swim')" id="tab-swim" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">
+        🏊 游泳
+      </button>
+      <button onclick="switchTab('gig')" id="tab-gig" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">
+        💼 兼職
+      </button>
+      <button onclick="switchTab('records')" id="tab-records" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">
+        📋 對帳明細
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-5 space-y-5">
+
+    <!-- 1. 首頁概況 -->
+    <section id="view-home" class="space-y-5">
+      <!-- 3格精簡數據指標 -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+          <p class="text-[11px] text-slate-400 font-medium">本月總營收</p>
+          <p id="stat-month-income" class="text-lg sm:text-2xl font-bold text-slate-900 mt-0.5 font-mono">$0</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+          <p class="text-[11px] text-emerald-600 font-medium">已入帳實收</p>
+          <p id="stat-settled" class="text-lg sm:text-2xl font-bold text-emerald-600 mt-0.5 font-mono">$0</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-amber-200 bg-amber-50/20 shadow-2xs">
+          <p class="text-[11px] text-amber-700 font-semibold">待收款項</p>
+          <p id="stat-pending" class="text-lg sm:text-2xl font-bold text-amber-600 mt-0.5 font-mono">$0</p>
+        </div>
+      </div>
+
+      <!-- 首頁快速記帳清單 -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-800">⚡ 常用快速記帳</h2>
+          <span class="text-[11px] text-slate-400">點擊按鈕直接寫入</span>
+        </div>
+        <div id="home-quick-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- 卡片動態載入 -->
+        </div>
+      </div>
+
+      <!-- 雙圖表 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+          <h3 class="text-xs font-bold text-slate-600 mb-2">收入來源分佈</h3>
+          <div class="h-44"><canvas id="typeChart"></canvas></div>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+          <h3 class="text-xs font-bold text-slate-600 mb-2">近期月營收趨勢</h3>
+          <div class="h-44"><canvas id="monthlyChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 家教管理 -->
+    <section id="view-tutoring" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">家教學生管理</h2>
+          <p class="text-xs text-slate-500">修改學生時薪不會影響過去已記帳的紀錄</p>
+        </div>
+        <button onclick="openStudentModal()" class="text-xs btn-primary font-medium px-3 py-2 rounded-lg transition shadow-2xs">
+          <i class="fa-solid fa-plus mr-1"></i>新增學生
+        </button>
+      </div>
+      <div id="tutoring-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <!-- 家教卡片 -->
+      </div>
+    </section>
+
+    <!-- 3. 游泳管理 -->
+    <section id="view-swim" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">游泳堂數與續報</h2>
+          <p class="text-xs text-slate-500">依公司/場館分類、10 堂進度追蹤、期滿一鍵續報</p>
+        </div>
+        <button onclick="openSwimModal()" class="text-xs btn-swim font-medium px-3 py-2 rounded-lg transition shadow-2xs">
+          <i class="fa-solid fa-plus mr-1"></i>新增學員/班級
+        </button>
+      </div>
+      <div id="swim-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <!-- 游泳卡片 -->
+      </div>
+    </section>
+
+    <!-- 4. 兼職登記 -->
+    <section id="view-gig" class="hidden max-w-lg mx-auto space-y-4">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
+        <h2 class="text-base font-bold text-slate-900 mb-3">登記兼職接案收入</h2>
+
+        <form onsubmit="saveGigEntry(event)" class="space-y-3.5">
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">上課 / 執行日期</label>
+            <input type="date" id="gigDate" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">專案 / 案名</label>
+            <input type="text" id="gigTitle" placeholder="如：運動會裁判、活動主持、專案諮詢" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">委託單位 / 請款公司</label>
+            <input type="text" id="gigPayer" placeholder="如：新竹縣體育會（月底對帳對象）" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-blue-500">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-slate-500 mb-1">計費方式</label>
+              <select id="gigRateType" onchange="toggleGigRateType()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white outline-none">
+                <option value="hourly">時薪制</option>
+                <option value="fixed">整筆包案 / 日薪</option>
+              </select>
+            </div>
+            <div id="wrapGigHours">
+              <label class="block text-xs text-slate-500 mb-1">時數 (小時)</label>
+              <input type="number" id="gigHours" value="1" min="0" step="any" oninput="calcGigTotal()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-blue-500">
+            </div>
+          </div>
+
+          <div>
+            <label id="labelGigRate" class="block text-xs text-slate-500 mb-1">時薪 ($NTD)</label>
+            <input type="number" id="gigRate" placeholder="輸入金額" min="0" step="any" required oninput="calcGigTotal()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-blue-500">
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-lg flex items-center justify-between text-xs">
+            <span class="text-slate-500 font-medium">合計金額</span>
+            <strong id="gigTotalPreview" class="text-sm font-bold text-slate-800 font-mono">$0</strong>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">狀態</label>
+            <select id="gigStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white outline-none">
+              <option value="pending">待收款 (尚未撥款)</option>
+              <option value="settled">已入帳 (已收到匯款)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 btn-primary font-medium rounded-lg text-sm transition">
+            儲存紀錄
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 5. 對帳明細 -->
+    <section id="view-records" class="hidden space-y-4">
+      <!-- 簡潔對帳卡片區 -->
+      <div class="bg-white border border-amber-200/80 rounded-xl p-4 shadow-2xs space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 flex items-center">
+              <i class="fa-solid fa-receipt text-amber-500 mr-1.5"></i>月底對帳請款清單
+            </h3>
+            <p class="text-[11px] text-slate-400">已自動整合同一位家長或公司的待收帳款</p>
+          </div>
+          <span id="billing-total-badge" class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full font-mono">
+            未結總額 $0
+          </span>
+        </div>
+
+        <div id="payer-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+          <!-- 聚合卡片 -->
+        </div>
+      </div>
+
+      <!-- 單筆明細清單 -->
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+        <div class="p-3 border-b border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700">單筆歷史明細</span>
+          <div class="flex space-x-1.5">
+            <select id="filterType" onchange="renderRecords()" class="text-xs border border-slate-200 rounded px-2 py-1 bg-white outline-none">
+              <option value="all">全類別</option>
+              <option value="tutoring">家教</option>
+              <option value="swim">游泳</option>
+              <option value="gig">兼職</option>
+            </select>
+            <select id="filterStatus" onchange="renderRecords()" class="text-xs border border-slate-200 rounded px-2 py-1 bg-white outline-none">
+              <option value="all">全狀態</option>
+              <option value="pending">待收</option>
+              <option value="settled">已收</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-400 font-medium border-b border-slate-100">
+              <tr>
+                <th class="py-2.5 px-3">日期</th>
+                <th class="py-2.5 px-3">對象 / 項目</th>
+                <th class="py-2.5 px-3">付款對象</th>
+                <th class="py-2.5 px-3">金額</th>
+                <th class="py-2.5 px-3">狀態</th>
+                <th class="py-2.5 px-3 text-right">操作</th>
+              </tr>
+            </thead>
+            <tbody id="records-tbody" class="divide-y divide-slate-100">
+              <!-- 明細 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 彈窗：家教快速上課簽到 -->
+  <div id="modal-quick-session" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-sm rounded-xl shadow-lg overflow-hidden">
+      <div class="theme-header text-white px-4 py-3 flex justify-between items-center">
+        <h3 class="font-bold text-sm">登記家教上課</h3>
+        <button onclick="closeQuickModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="saveQuickSession(event)" class="p-4 space-y-3">
+        <input type="hidden" id="quickStuId">
+        <div>
+          <span class="text-[11px] text-slate-400">學生</span>
+          <p id="quickStuName" class="text-sm font-bold text-slate-800"></p>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">上課日期</label>
+          <input type="date" id="quickDate" required class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">本次時數 (hr)</label>
+            <input type="number" id="quickHours" min="0" step="any" required oninput="recalcQuickTotal()" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">時薪 ($NTD)</label>
+            <input type="number" id="quickRate" min="0" step="any" required oninput="recalcQuickTotal()" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+        </div>
+        <div class="bg-slate-50 p-2 rounded flex justify-between items-center text-xs">
+          <span class="text-slate-500">本次費用</span>
+          <strong id="quickTotal" class="text-sm font-bold text-slate-800 font-mono">$0</strong>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">收款狀態</label>
+          <select id="quickStatus" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm bg-white outline-none">
+            <option value="pending">待收款 (月底結)</option>
+            <option value="settled">已入帳 (已現領/匯款)</option>
+          </select>
+        </div>
+        <div class="pt-1 flex space-x-2">
+          <button type="button" onclick="closeQuickModal()" class="w-1/2 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-600">取消</button>
+          <button type="submit" class="w-1/2 py-1.5 btn-primary rounded-lg text-xs font-semibold">確認登記</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 彈窗：新增/編輯家教學生 -->
+  <div id="modal-student" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-sm rounded-xl shadow-lg overflow-hidden">
+      <div class="theme-header text-white px-4 py-3 flex justify-between items-center">
+        <h3 id="studentModalTitle" class="font-bold text-sm">新增家教學員</h3>
+        <button onclick="closeStudentModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="saveStudent(event)" class="p-4 space-y-3">
+        <input type="hidden" id="stuId">
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">學生姓名 *</label>
+          <input type="text" id="stuName" required placeholder="如：林同學" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">付款人家長 (可同人合併對帳)</label>
+          <input type="text" id="stuPayer" placeholder="如：林媽媽 (留空預設學生姓名)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">預設時薪 ($) *</label>
+            <input type="number" id="stuRate" min="0" step="any" value="800" required class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">預設時數 (hr) *</label>
+            <input type="number" id="stuHours" min="0" step="any" value="2" required class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">上課時段</label>
+          <input type="text" id="stuSchedule" placeholder="如：每週二 19:00" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div class="flex items-center space-x-2 pt-0.5">
+          <input type="checkbox" id="stuActive" checked class="rounded text-blue-600">
+          <label for="stuActive" class="text-xs text-slate-700">授課中</label>
+        </div>
+        <div class="pt-1 flex space-x-2">
+          <button type="button" onclick="closeStudentModal()" class="w-1/2 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-600">取消</button>
+          <button type="submit" class="w-1/2 py-1.5 btn-primary rounded-lg text-xs font-semibold">儲存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 彈窗：新增/編輯游泳學員 -->
+  <div id="modal-swim" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-sm rounded-xl shadow-lg overflow-hidden">
+      <div class="bg-cyan-700 text-white px-4 py-3 flex justify-between items-center">
+        <h3 id="swimModalTitle" class="font-bold text-sm">新增游泳學員/班級</h3>
+        <button onclick="closeSwimModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="saveSwimStudent(event)" class="p-4 space-y-3">
+        <input type="hidden" id="swimId">
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">學員姓名 / 班級 *</label>
+          <input type="text" id="swimName" required placeholder="如：陳小弟 (個人班)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">所屬合作場館 / 派案公司 *</label>
+          <input type="text" id="swimCompany" required placeholder="如：竹北運動中心、私人家教" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">每期堂數 *</label>
+            <input type="number" id="swimTotalLessons" value="10" min="1" step="1" required class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">單堂費用 ($) *</label>
+            <input type="number" id="swimRate" min="0" step="any" value="800" required class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">固定時段</label>
+          <input type="text" id="swimSchedule" placeholder="如：每週六 10:00" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div class="pt-1 flex space-x-2">
+          <button type="button" onclick="closeSwimModal()" class="w-1/2 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-600">取消</button>
+          <button type="submit" class="w-1/2 py-1.5 btn-swim rounded-lg text-xs font-semibold">儲存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 彈窗：游泳一鍵續報新一期 -->
+  <div id="modal-swim-renew" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-sm rounded-xl shadow-lg overflow-hidden">
+      <div class="bg-emerald-600 text-white px-4 py-3 flex justify-between items-center">
+        <h3 class="font-bold text-sm">續報新一期游泳課程</h3>
+        <button onclick="closeRenewModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="saveRenewSession(event)" class="p-4 space-y-3">
+        <input type="hidden" id="renewStuId">
+        <div>
+          <span class="text-[11px] text-slate-400">學員</span>
+          <p id="renewStuName" class="text-sm font-bold text-slate-800"></p>
+          <span id="renewCompanyInfo" class="text-xs text-emerald-700"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">新期數堂數</label>
+            <input type="number" id="renewTotalLessons" value="10" min="1" step="1" required class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">新單堂費率 ($)</label>
+            <input type="number" id="renewRate" min="0" step="any" required class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-400">確認後將重置堂數，並可直接更新單堂薪資。</p>
+        <div class="pt-1 flex space-x-2">
+          <button type="button" onclick="closeRenewModal()" class="w-1/2 py-1.5 border border-slate-200 rounded-lg text-xs text-slate-600">取消</button>
+          <button type="submit" class="w-1/2 py-1.5 btn-success rounded-lg text-xs font-semibold">確認續報</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_STUDENTS = [
+      { id: 'stu_1', name: '哥哥小明 (國二理化)', payer: '林媽媽', hourlyRate: 800, defaultHours: 2, schedule: '每週二 19:00', active: true },
+      { id: 'stu_2', name: '妹妹小華 (國一數學)', payer: '林媽媽', hourlyRate: 800, defaultHours: 1.5, schedule: '每週四 19:00', active: true }
+    ];
+    const DEFAULT_SWIM = [
+      { id: 'swim_1', name: '周小弟 (仰式)', company: '竹北國民運動中心', totalLessons: 10, completedLessons: 8, lessonRate: 800, currentPeriod: 1, schedule: '每週六 14:00', active: true },
+      { id: 'swim_2', name: '王小姐 (自由式)', company: '私人家教', totalLessons: 10, completedLessons: 10, lessonRate: 1000, currentPeriod: 1, schedule: '每週三 19:30', active: true }
+    ];
+
+    let students = JSON.parse(localStorage.getItem('ffm_students')) || DEFAULT_STUDENTS;
+    let swimStudents = JSON.parse(localStorage.getItem('ffm_swim')) || DEFAULT_SWIM;
+    let records = JSON.parse(localStorage.getItem('ffm_records')) || [];
+    let typeChart = null, monthlyChart = null;
+
+    function saveState() {
+      localStorage.setItem('ffm_students', JSON.stringify(students));
+      localStorage.setItem('ffm_swim', JSON.stringify(swimStudents));
+      localStorage.setItem('ffm_records', JSON.stringify(records));
+      renderDashboard();
+    }
+
+    function switchTab(tabId) {
+      ['home', 'tutoring', 'swim', 'gig', 'records'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).classList.remove('theme-nav-active');
+        document.getElementById(`tab-${t}`).classList.add('border-transparent', 'text-slate-500');
+      });
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      document.getElementById(`tab-${tabId}`).classList.add('theme-nav-active');
+      document.getElementById(`tab-${tabId}`).classList.remove('border-transparent', 'text-slate-500');
+
+      if (tabId === 'home') renderDashboard();
+      if (tabId === 'tutoring') renderTutoring();
+      if (tabId === 'swim') renderSwim();
+      if (tabId === 'records') renderRecords();
+    }
+
+    function renderDashboard() {
+      const now = new Date();
+      const currentYearMonth = now.toISOString().slice(0, 7);
+
+      let monthTotal = 0, monthSettled = 0, monthPending = 0;
+      records.forEach(r => {
+        if (r.date.startsWith(currentYearMonth)) {
+          monthTotal += r.amount;
+          if (r.status === 'settled') monthSettled += r.amount;
+          else monthPending += r.amount;
+        }
+      });
+
+      document.getElementById('stat-month-income').innerText = `$${monthTotal.toLocaleString()}`;
+      document.getElementById('stat-settled').innerText = `$${monthSettled.toLocaleString()}`;
+      document.getElementById('stat-pending').innerText = `$${monthPending.toLocaleString()}`;
+
+      const container = document.getElementById('home-quick-list');
+      const activeTutoring = students.filter(s => s.active);
+      const activeSwim = swimStudents.filter(s => s.active);
+
+      if (activeTutoring.length === 0 && activeSwim.length === 0) {
+        container.innerHTML = `<div class="col-span-full py-4 text-center text-xs text-slate-400 bg-white rounded-xl">尚無活躍學員，請點分頁新增。</div>`;
+      } else {
+        const tutCards = activeTutoring.map(s => `
+          <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-[10px] badge-primary px-1.5 py-0.5 rounded font-medium">家教</span>
+                <strong class="text-xs text-slate-800">${s.name}</strong>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">${s.schedule || '未排'} | $${s.hourlyRate}/h</p>
+            </div>
+            <button onclick="openQuickModal('${s.id}')" class="text-xs btn-primary font-medium px-2.5 py-1.5 rounded-lg transition">
+              <i class="fa-solid fa-bolt mr-1"></i>記上課
+            </button>
+          </div>
+        `).join('');
+
+        const swimCards = activeSwim.map(s => {
+          const remain = Math.max(0, s.totalLessons - (s.completedLessons || 0));
+          const isDone = remain === 0;
+          return `
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <span class="text-[10px] badge-swim px-1.5 py-0.5 rounded font-medium">游泳</span>
+                  <strong class="text-xs text-slate-800">${s.name}</strong>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-0.5">${s.company} | <span class="${isDone ? 'text-amber-600 font-bold' : 'text-cyan-700 font-medium'}">剩 ${remain} 堂</span></p>
+              </div>
+              <button onclick="quickDeductSwim('${s.id}')" ${isDone ? 'disabled' : ''} class="text-xs btn-swim disabled:bg-slate-200 text-white font-medium px-2.5 py-1.5 rounded-lg transition">
+                <i class="fa-solid fa-check mr-1"></i>扣 1 堂
+              </button>
+            </div>
+          `;
+        }).join('');
+
+        container.innerHTML = tutCards + swimCards;
+      }
+
+      renderCharts();
+    }
+
+    function renderTutoring() {
+      const container = document.getElementById('tutoring-list');
+      container.innerHTML = students.map(s => `
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="text-sm font-bold text-slate-800">${s.name}</h4>
+                <p class="text-[11px] text-slate-400 mt-0.5">${s.schedule || '未設排程'}</p>
+              </div>
+              <span class="text-[11px] font-semibold badge-primary px-1.5 py-0.5 rounded font-mono">$${s.hourlyRate}/h</span>
+            </div>
+            <div class="mt-2 text-xs text-slate-600 bg-slate-50 p-2 rounded flex justify-between">
+              <span>付款家長：<strong>${s.payer || s.name}</strong></span>
+              <span>預設 ${s.defaultHours} 小時</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+            <button onclick="openQuickModal('${s.id}')" class="text-xs btn-primary font-medium px-2.5 py-1 rounded-md transition">
+              快速記課
+            </button>
+            <div class="space-x-2">
+              <button onclick="editStudent('${s.id}')" class="text-xs text-slate-400 hover:text-slate-700"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteStudent('${s.id}')" class="text-xs text-slate-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSwim() {
+      const container = document.getElementById('swim-list');
+      container.innerHTML = swimStudents.map(s => {
+        const total = s.totalLessons || 10;
+        const comp = s.completedLessons || 0;
+        const remain = Math.max(0, total - comp);
+        const percent = Math.min(100, Math.round((comp / total) * 100));
+        const isDone = remain === 0;
+
+        return `
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="text-sm font-bold text-slate-800">${s.name}</h4>
+                  <p class="text-[11px] text-cyan-700 font-medium">${s.company} (第 ${s.currentPeriod || 1} 期)</p>
+                </div>
+                <span class="text-xs font-bold ${isDone ? 'text-amber-600' : 'text-slate-700'}">
+                  ${isDone ? '已結業' : `剩 ${remain} 堂`}
+                </span>
+              </div>
+
+              <div class="mt-2.5">
+                <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                  <span>進度：${comp} / ${total} 堂</span>
+                  <span>$${s.lessonRate}/堂</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                  <div class="h-1.5 rounded-full ${isDone ? 'bg-amber-500' : 'progress-swim'}" style="width: ${percent}%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3.5 pt-2 border-t border-slate-100 flex items-center justify-between">
+              <button onclick="openRenewModal('${s.id}')" class="text-xs text-emerald-700 hover:text-emerald-800 font-semibold flex items-center badge-success px-2 py-1 rounded">
+                <i class="fa-solid fa-arrows-rotate mr-1"></i>續報
+              </button>
+              <div class="flex items-center space-x-1.5">
+                <button onclick="quickDeductSwim('${s.id}')" ${isDone ? 'disabled' : ''} class="text-xs btn-swim disabled:bg-slate-200 text-white font-medium px-2.5 py-1 rounded transition">
+                  扣 1 堂
+                </button>
+                <button onclick="deleteSwimStudent('${s.id}')" class="text-xs text-slate-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function quickDeductSwim(swimId) {
+      const s = swimStudents.find(item => item.id === swimId);
+      if (!s) return;
+      s.completedLessons = (s.completedLessons || 0) + 1;
+      
+      const newRec = {
+        id: 'rec_' + Date.now(),
+        date: new Date().toISOString().slice(0, 10),
+        type: 'swim',
+        title: `${s.name} (第 ${s.currentPeriod || 1} 期)`,
+        payer: s.company,
+        hours: 1,
+        unitPrice: s.lessonRate,
+        amount: s.lessonRate,
+        status: 'pending',
+        note: `第 ${s.completedLessons}/${s.totalLessons} 堂`
+      };
+      records.unshift(newRec);
+      saveState();
+      renderSwim();
+      alert(`已為【${s.name}】扣除 1 堂，已記為【${s.company}】待收款 $${s.lessonRate}。`);
+    }
+
+    function toggleGigRateType() {
+      const isFixed = document.getElementById('gigRateType').value === 'fixed';
+      document.getElementById('wrapGigHours').style.display = isFixed ? 'none' : 'block';
+      document.getElementById('labelGigRate').innerText = isFixed ? '包案固定金額 ($NTD)' : '時薪 ($NTD)';
+      calcGigTotal();
+    }
+
+    function calcGigTotal() {
+      const isFixed = document.getElementById('gigRateType').value === 'fixed';
+      const rate = parseFloat(document.getElementById('gigRate').value) || 0;
+      const hours = parseFloat(document.getElementById('gigHours').value) || 0;
+      const total = isFixed ? rate : Math.round(rate * hours);
+      document.getElementById('gigTotalPreview').innerText = `$${total.toLocaleString()}`;
+    }
+
+    function saveGigEntry(e) {
+      e.preventDefault();
+      const isFixed = document.getElementById('gigRateType').value === 'fixed';
+      const rate = parseFloat(document.getElementById('gigRate').value) || 0;
+      const hours = isFixed ? null : (parseFloat(document.getElementById('gigHours').value) || 1);
+      const title = document.getElementById('gigTitle').value.trim();
+      const payer = document.getElementById('gigPayer').value.trim() || title;
+      const amount = isFixed ? rate : Math.round(rate * hours);
+
+      const newRec = {
+        id: 'rec_' + Date.now(),
+        date: document.getElementById('gigDate').value,
+        type: 'gig',
+        title: title,
+        payer: payer,
+        hours: hours,
+        unitPrice: rate,
+        amount: amount,
+        status: document.getElementById('gigStatus').value,
+        note: ''
+      };
+      records.unshift(newRec);
+      saveState();
+      alert('兼職紀錄已儲存！');
+      switchTab('records');
+    }
+
+    function renderRecords() {
+      const pendingRecords = records.filter(r => r.status === 'pending');
+      const payerMap = {};
+      let totalPending = 0;
+
+      pendingRecords.forEach(r => {
+        totalPending += r.amount;
+        const key = r.payer || r.title;
+        if (!payerMap[key]) {
+          payerMap[key] = { payer: key, total: 0, count: 0, items: new Set(), recs: [] };
+        }
+        payerMap[key].total += r.amount;
+        payerMap[key].count += 1;
+        payerMap[key].items.add(r.title);
+        payerMap[key].recs.push(r);
+      });
+
+      document.getElementById('billing-total-badge').innerText = `全部待結: $${totalPending.toLocaleString()}`;
+
+      const pContainer = document.getElementById('payer-cards-container');
+      const keys = Object.keys(payerMap);
+
+      if (keys.length === 0) {
+        pContainer.innerHTML = `<div class="col-span-full py-3 text-center text-xs text-emerald-600 font-medium">目前無任何待收款項，款項皆已結清！</div>`;
+      } else {
+        pContainer.innerHTML = keys.map(k => {
+          const g = payerMap[k];
+          const itemsStr = Array.from(g.items).join('、');
+          const safeKey = encodeURIComponent(k);
+
+          return `
+            <div class="bg-slate-50 p-3 rounded-lg border border-amber-200/80 flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-bold text-slate-800">${g.payer}</h4>
+                  <span class="text-[10px] font-bold text-amber-700 bg-amber-100/70 px-1.5 py-0.5 rounded">${g.count} 筆</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-0.5">對象：${itemsStr}</p>
+                <p class="text-sm font-bold text-slate-900 font-mono mt-1">$${g.total.toLocaleString()}</p>
+              </div>
+              <div class="mt-2.5 pt-2 border-t border-slate-200/60 flex space-x-1.5 justify-end">
+                <button onclick="copyBillText('${safeKey}')" class="text-[11px] bg-white border border-slate-200 text-slate-600 hover:text-slate-800 px-2 py-1 rounded transition">
+                  <i class="fa-regular fa-copy mr-1"></i>明細
+                </button>
+                <button onclick="settlePayerAll('${safeKey}')" class="text-[11px] btn-success font-semibold px-2 py-1 rounded transition">
+                  一鍵結清
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const fType = document.getElementById('filterType').value;
+      const fStat = document.getElementById('filterStatus').value;
+      const filtered = records.filter(r => {
+        if (fType !== 'all' && r.type !== fType) return false;
+        if (fStat !== 'all' && r.status !== fStat) return false;
+        return true;
+      });
+
+      const tbody = document.getElementById('records-tbody');
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">尚無紀錄</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => {
+        const isSettled = r.status === 'settled';
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="py-2 px-3 text-slate-500 font-mono whitespace-nowrap">${r.date.slice(5)}</td>
+            <td class="py-2 px-3 font-medium text-slate-800">${r.title}</td>
+            <td class="py-2 px-3 text-slate-500">${r.payer || '-'}</td>
+            <td class="py-2 px-3 font-bold text-slate-900 font-mono">$${r.amount.toLocaleString()}</td>
+            <td class="py-2 px-3">
+              <button onclick="toggleRecordStatus('${r.id}')" class="text-[10px] font-medium px-1.5 py-0.5 rounded ${isSettled ? 'badge-success' : 'badge-warning'}">
+                ${isSettled ? '已入帳' : '待收'}
+              </button>
+            </td>
+            <td class="py-2 px-3 text-right">
+              <button onclick="deleteRecord('${r.id}')" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function copyBillText(encodedKey) {
+      const key = decodeURIComponent(encodedKey);
+      const pending = records.filter(r => r.status === 'pending' && (r.payer === key || (!r.payer && r.title === key)));
+      if (pending.length === 0) return;
+
+      const total = pending.reduce((s, r) => s + r.amount, 0);
+      let text = `您好，這是本次的請款明細（${key}）：\n`;
+      pending.forEach((r, idx) => {
+        text += `${idx + 1}. ${r.date} ${r.title} - $${r.amount}\n`;
+      });
+      text += `--------------------\n合計應收金額：$${total.toLocaleString()} 元\n感謝您！`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert(`已複製【${key}】的請款明細到剪貼簿，可直接貼到 LINE！`);
+      });
+    }
+
+    function settlePayerAll(encodedKey) {
+      const key = decodeURIComponent(encodedKey);
+      const target = records.filter(r => r.status === 'pending' && (r.payer === key || (!r.payer && r.title === key)));
+      if (target.length === 0) return;
+      const total = target.reduce((s, r) => s + r.amount, 0);
+      if (confirm(`確認已收到【${key}】款項 $${total.toLocaleString()}？`)) {
+        target.forEach(r => r.status = 'settled');
+        saveState();
+        renderRecords();
+      }
+    }
+
+    function toggleRecordStatus(id) {
+      const r = records.find(item => item.id === id);
+      if (r) {
+        r.status = r.status === 'settled' ? 'pending' : 'settled';
+        saveState();
+        renderRecords();
+      }
+    }
+
+    function deleteRecord(id) {
+      if (confirm('確定刪除此紀錄？')) {
+        records = records.filter(r => r.id !== id);
+        saveState();
+        renderRecords();
+      }
+    }
+
+    function openQuickModal(id) {
+      const s = students.find(item => item.id === id);
+      if (!s) return;
+      document.getElementById('quickStuId').value = s.id;
+      document.getElementById('quickStuName').innerText = `${s.name} (${s.payer || '自繳'})`;
+      document.getElementById('quickDate').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('quickHours').value = s.defaultHours;
+      document.getElementById('quickRate').value = s.hourlyRate;
+      recalcQuickTotal();
+      document.getElementById('modal-quick-session').classList.remove('hidden');
+    }
+    function closeQuickModal() { document.getElementById('modal-quick-session').classList.add('hidden'); }
+    function recalcQuickTotal() {
+      const h = parseFloat(document.getElementById('quickHours').value) || 0;
+      const r = parseFloat(document.getElementById('quickRate').value) || 0;
+      document.getElementById('quickTotal').innerText = `$${Math.round(h * r).toLocaleString()}`;
+    }
+    function saveQuickSession(e) {
+      e.preventDefault();
+      const id = document.getElementById('quickStuId').value;
+      const s = students.find(item => item.id === id);
+      const h = parseFloat(document.getElementById('quickHours').value) || 0;
+      const r = parseFloat(document.getElementById('quickRate').value) || 0;
+      
+      records.unshift({
+        id: 'rec_' + Date.now(),
+        date: document.getElementById('quickDate').value,
+        type: 'tutoring',
+        title: s.name,
+        payer: s.payer || s.name,
+        studentId: s.id,
+        hours: h,
+        unitPrice: r,
+        amount: Math.round(h * r),
+        status: document.getElementById('quickStatus').value,
+        note: ''
+      });
+      saveState();
+      closeQuickModal();
+      alert(`已登記 ${s.name} 課堂！`);
+    }
+
+    function openStudentModal() {
+      document.getElementById('stuId').value = '';
+      document.getElementById('studentModalTitle').innerText = '新增家教學員';
+      document.getElementById('stuName').value = '';
+      document.getElementById('stuPayer').value = '';
+      document.getElementById('stuRate').value = '800';
+      document.getElementById('stuHours').value = '2';
+      document.getElementById('stuSchedule').value = '';
+      document.getElementById('stuActive').checked = true;
+      document.getElementById('modal-student').classList.remove('hidden');
+    }
+    function editStudent(id) {
+      const s = students.find(item => item.id === id);
+      if (!s) return;
+      document.getElementById('stuId').value = s.id;
+      document.getElementById('studentModalTitle').innerText = '編輯家教學員';
+      document.getElementById('stuName').value = s.name;
+      document.getElementById('stuPayer').value = s.payer || '';
+      document.getElementById('stuRate').value = s.hourlyRate;
+      document.getElementById('stuHours').value = s.defaultHours;
+      document.getElementById('stuSchedule').value = s.schedule || '';
+      document.getElementById('stuActive').checked = s.active;
+      document.getElementById('modal-student').classList.remove('hidden');
+    }
+    function closeStudentModal() { document.getElementById('modal-student').classList.add('hidden'); }
+    function saveStudent(e) {
+      e.preventDefault();
+      const id = document.getElementById('stuId').value;
+      const newStu = {
+        id: id || 'stu_' + Date.now(),
+        name: document.getElementById('stuName').value.trim(),
+        payer: document.getElementById('stuPayer').value.trim() || document.getElementById('stuName').value.trim(),
+        hourlyRate: parseFloat(document.getElementById('stuRate').value) || 0,
+        defaultHours: parseFloat(document.getElementById('stuHours').value) || 0,
+        schedule: document.getElementById('stuSchedule').value.trim(),
+        active: document.getElementById('stuActive').checked
+      };
+      if (id) {
+        const idx = students.findIndex(s => s.id === id);
+        students[idx] = newStu;
+      } else {
+        students.push(newStu);
+      }
+      saveState();
+      closeStudentModal();
+      renderTutoring();
+    }
+    function deleteStudent(id) {
+      if (confirm('確定刪除學生？')) {
+        students = students.filter(s => s.id !== id);
+        saveState();
+        renderTutoring();
+      }
+    }
+
+    function openSwimModal() {
+      document.getElementById('swimId').value = '';
+      document.getElementById('swimName').value = '';
+      document.getElementById('swimCompany').value = '';
+      document.getElementById('swimTotalLessons').value = '10';
+      document.getElementById('swimRate').value = '800';
+      document.getElementById('swimSchedule').value = '';
+      document.getElementById('modal-swim').classList.remove('hidden');
+    }
+    function closeSwimModal() { document.getElementById('modal-swim').classList.add('hidden'); }
+    function saveSwimStudent(e) {
+      e.preventDefault();
+      const id = document.getElementById('swimId').value;
+      const newS = {
+        id: id || 'swim_' + Date.now(),
+        name: document.getElementById('swimName').value.trim(),
+        company: document.getElementById('swimCompany').value.trim(),
+        totalLessons: parseInt(document.getElementById('swimTotalLessons').value) || 10,
+        completedLessons: 0,
+        lessonRate: parseFloat(document.getElementById('swimRate').value) || 0,
+        schedule: document.getElementById('swimSchedule').value.trim(),
+        currentPeriod: 1,
+        active: true
+      };
+      if (id) {
+        const idx = swimStudents.findIndex(s => s.id === id);
+        swimStudents[idx] = { ...swimStudents[idx], ...newS };
+      } else {
+        swimStudents.push(newS);
+      }
+      saveState();
+      closeSwimModal();
+      renderSwim();
+    }
+    function deleteSwimStudent(id) {
+      if (confirm('確定刪除學員？')) {
+        swimStudents = swimStudents.filter(s => s.id !== id);
+        saveState();
+        renderSwim();
+      }
+    }
+
+    function openRenewModal(id) {
+      const s = swimStudents.find(item => item.id === id);
+      if (!s) return;
+      document.getElementById('renewStuId').value = s.id;
+      document.getElementById('renewStuName').innerText = `${s.name} (進入第 ${(s.currentPeriod || 1) + 1} 期)`;
+      document.getElementById('renewCompanyInfo').innerText = `所屬：${s.company}`;
+      document.getElementById('renewTotalLessons').value = 10;
+      document.getElementById('renewRate').value = s.lessonRate;
+      document.getElementById('modal-swim-renew').classList.remove('hidden');
+    }
+    function closeRenewModal() { document.getElementById('modal-swim-renew').classList.add('hidden'); }
+    function saveRenewSession(e) {
+      e.preventDefault();
+      const id = document.getElementById('renewStuId').value;
+      const s = swimStudents.find(item => item.id === id);
+      if (!s) return;
+      s.currentPeriod = (s.currentPeriod || 1) + 1;
+      s.totalLessons = parseInt(document.getElementById('renewTotalLessons').value) || 10;
+      s.completedLessons = 0;
+      s.lessonRate = parseFloat(document.getElementById('renewRate').value) || s.lessonRate;
+      saveState();
+      closeRenewModal();
+      renderSwim();
+      alert(`已成功續報！【${s.name}】已開啓第 ${s.currentPeriod} 期。`);
+    }
+
+    function renderCharts() {
+      let tutTotal = 0, swimTotal = 0, gigTotal = 0;
+      records.forEach(r => {
+        if (r.type === 'tutoring') tutTotal += r.amount;
+        else if (r.type === 'swim') swimTotal += r.amount;
+        else gigTotal += r.amount;
+      });
+
+      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#2563eb';
+      const swimColor = getComputedStyle(document.documentElement).getPropertyValue('--swim').trim() || '#0891b2';
+
+      const ctxT = document.getElementById('typeChart').getContext('2d');
+      if (typeChart) typeChart.destroy();
+      typeChart = new Chart(ctxT, {
+        type: 'doughnut',
+        data: {
+          labels: ['家教', '游泳', '兼職'],
+          datasets: [{ data: [tutTotal, swimTotal, gigTotal], backgroundColor: [primaryColor, swimColor, '#8b5cf6'], borderWidth: 0 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 10 } } } } }
+      });
+
+      const months = [];
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        months.push(d.toISOString().slice(0, 7));
+      }
+      const data = months.map(m => records.filter(r => r.date.startsWith(m)).reduce((s, r) => s + r.amount, 0));
+
+      const ctxM = document.getElementById('monthlyChart').getContext('2d');
+      if (monthlyChart) monthlyChart.destroy();
+      monthlyChart = new Chart(ctxM, {
+        type: 'bar',
+        data: {
+          labels: months.map(m => m.slice(5) + '月'),
+          datasets: [{ data: data, backgroundColor: primaryColor, borderRadius: 4 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 9 } } }, x: { ticks: { font: { size: 10 } } } } }
+      });
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify({ students, swimStudents, records }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `finance_backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+    function importData(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const d = JSON.parse(evt.target.result);
+          students = d.students || [];
+          swimStudents = d.swimStudents || [];
+          records = d.records || [];
+          saveState();
+          alert('資料匯入還原成功！');
+        } catch(err) { alert('備份檔案讀取失敗'); }
+      };
+      reader.readAsText(file);
+    }
+
+    window.onload = function() {
+      document.getElementById('gigDate').value = new Date().toISOString().slice(0, 10);
+      renderDashboard();
+    };
+  </script>
+</body>
+</html>
