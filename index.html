@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Freelance Finance Manager</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -85,7 +85,7 @@
           <span>學員 CRM 管理</span>
         </button>
         <button onclick="switchTab('records')" data-tab="records" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-100">
-          <svg class="icon w-4 h-4" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6"/><path d="M16 12h-6"/><path d="M16 16h-6"/></svg>
+          <svg class="icon w-4 h-4" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6"/><path d="M16 12h-6"/><path d="M16 16h-6"/></svg>
           <span>全方位收入帳本</span>
         </button>
         <button onclick="switchTab('analytics')" data-tab="analytics" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-100">
@@ -151,9 +151,7 @@
 
     <div class="p-4 md:p-8 space-y-6 max-w-7xl w-full mx-auto">
       
-      <!-- ======================================================== -->
-      <!-- TAB 1: DASHBOARD & QUICK LOGGING                        -->
-      <!-- ======================================================== -->
+      <!-- TAB 1: DASHBOARD & QUICK LOGGING -->
       <section id="tab-dashboard" class="space-y-6">
         
         <!-- KPI METRICS CARDS -->
@@ -244,9 +242,7 @@
         </div>
       </section>
 
-      <!-- ======================================================== -->
-      <!-- TAB 2: STUDENT CRM MANAGEMENT                          -->
-      <!-- ======================================================== -->
+      <!-- TAB 2: STUDENT CRM MANAGEMENT -->
       <section id="tab-students" class="hidden space-y-6">
         <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
           <!-- CRM Top Toolbar -->
@@ -278,9 +274,7 @@
         </div>
       </section>
 
-      <!-- ======================================================== -->
-      <!-- TAB 3: COMPLETE INCOME RECORDS & LEDGER                 -->
-      <!-- ======================================================== -->
+      <!-- TAB 3: COMPLETE INCOME RECORDS & LEDGER -->
       <section id="tab-records" class="hidden space-y-6">
         <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -351,9 +345,7 @@
         </div>
       </section>
 
-      <!-- ======================================================== -->
-      <!-- TAB 4: FINANCIAL ANALYTICS & AR REMINDERS              -->
-      <!-- ======================================================== -->
+      <!-- TAB 4: FINANCIAL ANALYTICS & AR REMINDERS -->
       <section id="tab-analytics" class="hidden space-y-6">
         <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 shadow-xs">
           <div class="flex items-start justify-between gap-3">
@@ -423,7 +415,7 @@
       <span class="text-[10px] mt-0.5 font-medium text-slate-600">記帳</span>
     </button>
     <button onclick="switchTab('records')" data-mobtab="records" class="flex flex-col items-center py-1 text-slate-400">
-      <svg class="icon w-5 h-5" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/></svg>
+      <svg class="icon w-5 h-5" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/></svg>
       <span class="text-[10px] mt-0.5 font-medium">帳本</span>
     </button>
     <button onclick="switchTab('analytics')" data-mobtab="analytics" class="flex flex-col items-center py-1 text-slate-400">
@@ -435,17 +427,17 @@
   <!-- ======================================================== -->
   <!-- MODAL: QUICK TUTORING LOG FOR SPECIFIC STUDENT           -->
   <!-- ======================================================== -->
-  <div id="quickTutorModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-sky-600 to-brand-600 px-5 py-4 text-white flex items-center justify-between">
+  <div id="quickTutorModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-sky-600 to-brand-600 px-5 py-3.5 text-white flex items-center justify-between shrink-0">
         <div>
           <h3 class="font-bold text-sm md:text-base" id="qtStudentTitle">快速登記上課</h3>
-          <p class="text-xs text-sky-100" id="qtStudentSub">自動套用該學生專屬固定時薪 (可手動修改折扣實收)</p>
+          <p class="text-xs text-sky-100" id="qtStudentSub">自動套用時薪 (可手動修改實收金額)</p>
         </div>
-        <button onclick="closeModal('quickTutorModal')" class="text-sky-200 hover:text-white p-1 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeModal('quickTutorModal')" class="text-sky-200 hover:text-white p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
 
-      <form id="quickTutorForm" onsubmit="handleQuickTutorSubmit(event)" class="p-5 space-y-4">
+      <form id="quickTutorForm" onsubmit="handleQuickTutorSubmit(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
         <input type="hidden" id="qtStudentId">
 
         <div class="grid grid-cols-2 gap-3">
@@ -470,11 +462,11 @@
           <div>
             <div class="flex items-center justify-between mb-1">
               <label class="block text-xs font-medium text-slate-600">當次實收薪資</label>
-              <span class="text-[10px] text-emerald-600 font-medium">可手動填折扣</span>
+              <span class="text-[10px] text-emerald-600 font-medium">可手動修改</span>
             </div>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-xs text-emerald-600 font-bold">NT$</span>
-              <input type="number" id="qtTotal" step="1" min="0" oninput="markQuickTutorManualEdit()" placeholder="可手動修改折扣金額" class="w-full text-xs md:text-sm rounded-xl border border-emerald-300 bg-white pl-10 p-2.5 text-emerald-700 font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              <input type="number" id="qtTotal" step="1" min="0" oninput="markQuickTutorManualEdit()" placeholder="可手動修改金額" class="w-full text-xs md:text-sm rounded-xl border border-emerald-300 bg-white pl-10 p-2.5 text-emerald-700 font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
             </div>
           </div>
         </div>
@@ -490,7 +482,7 @@
             <label class="border border-slate-200 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50/50">
               <input type="radio" name="qtPaymentStatus" value="unpaid" checked class="text-brand-600">
               <div>
-                <span class="text-xs font-semibold block text-slate-800">待收 (未入帳)</span>
+                <span class="text-xs font-semibold block text-slate-800">待收款 (未入帳)</span>
                 <span class="text-[10px] text-slate-400">定期結算</span>
               </div>
             </label>
@@ -504,7 +496,7 @@
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
           <button type="button" onclick="closeModal('quickTutorModal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
           <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 shadow-sm">
             儲存上課紀錄
@@ -515,19 +507,19 @@
   </div>
 
   <!-- ======================================================== -->
-  <!-- MODAL: SWIM LOGGING (支援自訂扣除堂數，如 1.5 堂)         -->
+  <!-- MODAL: SWIM LOGGING (支援 1.5 堂扣除與上下滾動)         -->
   <!-- ======================================================== -->
-  <div id="quickSwimModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-5 py-4 text-white flex items-center justify-between">
+  <div id="quickSwimModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-5 py-3.5 text-white flex items-center justify-between shrink-0">
         <div>
           <h3 class="font-bold text-sm md:text-base" id="qswTitle">游泳課堂簽到</h3>
           <p class="text-xs text-teal-100" id="qswSub">可填寫 1 或 1.5 堂，自動扣除並計費</p>
         </div>
-        <button onclick="closeModal('quickSwimModal')" class="text-teal-200 hover:text-white p-1 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeModal('quickSwimModal')" class="text-teal-200 hover:text-white p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
 
-      <form id="quickSwimForm" onsubmit="handleQuickSwimSubmit(event)" class="p-5 space-y-4">
+      <form id="quickSwimForm" onsubmit="handleQuickSwimSubmit(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
         <input type="hidden" id="qswStudentId">
         <input type="hidden" id="qswBaseLessonRate">
 
@@ -579,7 +571,7 @@
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
           <button type="button" onclick="closeModal('quickSwimModal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
           <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 shadow-sm">
             確認簽到扣堂
@@ -592,17 +584,17 @@
   <!-- ======================================================== -->
   <!-- MODAL: SWIM RENEW (一鍵續報新一期)                       -->
   <!-- ======================================================== -->
-  <div id="swimRenewModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-4 text-white flex items-center justify-between">
+  <div id="swimRenewModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-3.5 text-white flex items-center justify-between shrink-0">
         <div>
           <h3 class="font-bold text-sm md:text-base">續報新一期游泳課程</h3>
           <p class="text-xs text-emerald-100" id="srSub">自動開展下一期並重置堂數</p>
         </div>
-        <button onclick="closeModal('swimRenewModal')" class="text-emerald-200 hover:text-white p-1 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeModal('swimRenewModal')" class="text-emerald-200 hover:text-white p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
 
-      <form id="swimRenewForm" onsubmit="handleSwimRenewSubmit(event)" class="p-5 space-y-4">
+      <form id="swimRenewForm" onsubmit="handleSwimRenewSubmit(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
         <input type="hidden" id="srStudentId">
 
         <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-100 text-xs">
@@ -624,7 +616,7 @@
 
         <p class="text-[11px] text-slate-400">確認後期數將自動累加，堂數進度重新自 0 計算，若有調薪直接在上方修改即可。</p>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
           <button type="button" onclick="closeModal('swimRenewModal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
           <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">
             確認續報新一期
@@ -637,17 +629,17 @@
   <!-- ======================================================== -->
   <!-- MODAL: STUDENT CRM - ADD / EDIT TUTOR STUDENT            -->
   <!-- ======================================================== -->
-  <div id="studentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+  <div id="studentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
         <div>
           <h3 class="font-bold text-slate-900 text-sm md:text-base" id="studentModalTitle">新增家教學生檔案</h3>
           <p class="text-xs text-slate-500">每位學生綁定固定時薪與上課排程</p>
         </div>
-        <button onclick="closeModal('studentModal')" class="text-slate-400 hover:text-slate-700 p-1 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeModal('studentModal')" class="text-slate-400 hover:text-slate-700 p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
 
-      <form id="studentForm" onsubmit="handleStudentFormSubmit(event)" class="p-5 space-y-4">
+      <form id="studentForm" onsubmit="handleStudentFormSubmit(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
         <input type="hidden" id="studentFormId">
 
         <div>
@@ -693,7 +685,7 @@
           </label>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
           <button type="button" onclick="closeModal('studentModal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
           <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 shadow-sm">
             儲存學生資料
@@ -706,17 +698,17 @@
   <!-- ======================================================== -->
   <!-- MODAL: ADD / EDIT SWIM STUDENT (手動校正第幾堂)         -->
   <!-- ======================================================== -->
-  <div id="swimStudentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+  <div id="swimStudentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
         <div>
           <h3 class="font-bold text-slate-900 text-sm md:text-base" id="swimModalTitle">新增游泳學員 / 班級</h3>
           <p class="text-xs text-slate-500">可自由校正「目前已上堂數」與期數</p>
         </div>
-        <button onclick="closeModal('swimStudentModal')" class="text-slate-400 hover:text-slate-700 p-1 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeModal('swimStudentModal')" class="text-slate-400 hover:text-slate-700 p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
 
-      <form id="swimStudentForm" onsubmit="handleSwimStudentFormSubmit(event)" class="p-5 space-y-4">
+      <form id="swimStudentForm" onsubmit="handleSwimStudentFormSubmit(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
         <input type="hidden" id="swimFormId">
 
         <div>
@@ -768,7 +760,7 @@
           </label>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
           <button type="button" onclick="closeModal('swimStudentModal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
           <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 shadow-sm">
             儲存游泳學員
@@ -781,17 +773,17 @@
   <!-- ======================================================== -->
   <!-- MODAL: UNIVERSAL RECORD LOGGER                           -->
   <!-- ======================================================== -->
-  <div id="universalRecordModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+  <div id="universalRecordModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
         <div>
           <h3 class="font-bold text-slate-900 text-sm md:text-base">登記錄入收入</h3>
           <p class="text-xs text-slate-500">支援家教、游泳教練與多元接案</p>
         </div>
-        <button onclick="closeModal('universalRecordModal')" class="text-slate-400 hover:text-slate-700 p-1 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeModal('universalRecordModal')" class="text-slate-400 hover:text-slate-700 p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
 
-      <form id="universalRecordForm" onsubmit="handleUniversalRecordSubmit(event)" class="p-5 space-y-4">
+      <form id="universalRecordForm" onsubmit="handleUniversalRecordSubmit(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
         <input type="hidden" id="urRecordId">
 
         <div>
@@ -927,7 +919,7 @@
           <input type="text" id="urNote" placeholder="選填備註說明" class="w-full text-xs md:text-sm rounded-xl border border-slate-300 p-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
           <button type="button" onclick="closeModal('universalRecordModal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
           <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 shadow-sm">
             確認登記
@@ -940,13 +932,13 @@
   <!-- ======================================================== -->
   <!-- MODAL: DATA MANAGEMENT                                   -->
   <!-- ======================================================== -->
-  <div id="dataManageModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+  <div id="dataManageModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
         <h3 class="font-bold text-slate-900 text-sm md:text-base">資料庫管理與本機備份</h3>
-        <button onclick="closeModal('dataManageModal')" class="text-slate-400 hover:text-slate-700 p-1 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeModal('dataManageModal')" class="text-slate-400 hover:text-slate-700 p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
-      <div class="p-5 space-y-4 text-xs md:text-sm">
+      <div class="p-5 space-y-4 text-xs md:text-sm overflow-y-auto flex-1 custom-scrollbar">
         <p class="text-slate-500 text-xs">系統將所有學生檔案與收支紀錄自動保存在您的瀏覽器中，無任何隱私資料上傳。您可以隨時匯出備份 JSON 或匯入還原。</p>
 
         <div class="space-y-2">
@@ -2045,7 +2037,6 @@
         specDetail = `${r.units || 1} 單位 (${r.rateModel || '專案'})`;
       }
 
-      // 改用原生 SVG 垃圾桶，絕不因重繪而隱形消失
       const trashSvg = `
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="3 6 5 6 21 6"></polyline>
@@ -2329,7 +2320,7 @@
 
     function downloadJsonBackup() {
       const backupData = {
-        version: '1.3',
+        version: '1.4',
         exportedAt: new Date().toISOString(),
         students: students,
         swimStudents: swimStudents,
@@ -2397,7 +2388,8 @@
       const el = document.getElementById(modalId);
       if (el) {
         el.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
+        // 允許彈窗內部觸控滾動，避免手機瀏覽器手勢被鎖死
+        el.style.touchAction = 'pan-y';
       }
     }
 
@@ -2405,7 +2397,6 @@
       const el = document.getElementById(modalId);
       if (el) {
         el.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
       }
     }
 
