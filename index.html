@@ -1986,7 +1986,8 @@
         if (keyword) {
           const matchTitle = (r.title || '').toLowerCase().includes(keyword);
           const matchNote = (r.note || '').toLowerCase().includes(keyword);
-          if (!matchTitle && !matchNote) return false;
+          const matchPayer = (r.payer || '').toLowerCase().includes(keyword);
+          if (!matchTitle && !matchNote && !matchPayer) return false;
         }
 
         return true;
