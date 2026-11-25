@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Freelance Finance Manager</title>
+  <title>Freelance Finance & Life Manager</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js for Financial Analytics -->
@@ -21,10 +21,7 @@
               600: '#2563eb',
               700: '#1d4ed8',
               800: '#1e40af',
-            },
-            tutor: '#0284c7',
-            swim: '#0d9488',
-            gig: '#7c3aed',
+            }
           }
         }
       }
@@ -84,6 +81,10 @@
           <svg class="icon w-4 h-4" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>學員 CRM 管理</span>
         </button>
+        <button onclick="switchTab('expense')" data-tab="expense" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-100">
+          <svg class="icon w-4 h-4 text-rose-500" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span class="text-rose-600 font-semibold">生活支出記帳</span>
+        </button>
         <button onclick="switchTab('records')" data-tab="records" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition text-slate-600 hover:bg-slate-100">
           <svg class="icon w-4 h-4" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6"/><path d="M16 12h-6"/><path d="M16 16h-6"/></svg>
           <span>全方位收入帳本</span>
@@ -98,13 +99,13 @@
     <!-- Quick Stats Box -->
     <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-4 text-white shadow-sm">
       <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
-        <span>本月累計應收</span>
+        <span>本月實質淨利 (存下)</span>
         <svg class="icon w-4 h-4 text-emerald-400" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
       </div>
-      <div class="text-xl font-bold tracking-tight text-white" id="sidebarTotalGross">NT$ 0</div>
+      <div class="text-xl font-bold tracking-tight text-emerald-400 font-mono" id="sidebarNetProfit">NT$ 0</div>
       <div class="mt-2 text-xs flex justify-between items-center text-slate-400 pt-2 border-t border-slate-700">
-        <span>待收未付:</span>
-        <span class="font-semibold text-amber-400" id="sidebarUnpaid">NT$ 0</span>
+        <span>本月支出:</span>
+        <span class="font-semibold text-rose-400 font-mono" id="sidebarTotalExpense">NT$ 0</span>
       </div>
     </div>
   </aside>
@@ -119,7 +120,7 @@
     </div>
     <div class="flex items-center gap-2">
       <button onclick="openUniversalRecordModal()" class="bg-brand-600 text-white px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 shadow-sm font-medium">
-        <span>+ 記一筆</span>
+        <span>+ 記收入</span>
       </button>
     </div>
   </header>
@@ -152,7 +153,7 @@
     <div class="p-4 md:p-8 space-y-6 max-w-7xl w-full mx-auto">
       
       <!-- ======================================================== -->
-      <!-- TAB 1: DASHBOARD & QUICK LOGGING                        -->
+      <!-- TAB 1: DASHBOARD (經典家教與游泳介面，完全無更動)       -->
       <!-- ======================================================== -->
       <section id="tab-dashboard" class="space-y-6">
         
@@ -174,8 +175,8 @@
 
           <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
             <div class="text-xs font-medium text-slate-500 mb-2">本月教學/工時</div>
-            <div class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight" id="kpiTotalHours">0 <span class="text-xs font-normal text-slate-400">小時/堂</span></div>
-            <p class="text-[11px] text-slate-400 mt-1" id="kpiTutoringShare">各項目運作中</p>
+            <div class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight" id="kpiTotalHours">0 <span class="text-xs font-normal text-slate-400">小時</span></div>
+            <p class="text-[11px] text-slate-400 mt-1" id="kpiTutoringShare">家教佔比 0%</p>
           </div>
 
           <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
@@ -188,7 +189,7 @@
           </div>
         </div>
 
-        <!-- 1. 家教：快速登記上課 (維持你最熟悉的經典介面) -->
+        <!-- 1. 家教：快速登記上課 -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
             <div>
@@ -202,7 +203,7 @@
           <div id="quickStudentGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5"></div>
         </div>
 
-        <!-- 2. 游泳：快速簽到扣堂與進度卡片 (維持你最熟悉的經典介面) -->
+        <!-- 2. 游泳：快速簽到扣堂與進度卡片 -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
             <div>
@@ -216,7 +217,7 @@
           <div id="quickSwimGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5"></div>
         </div>
 
-        <!-- 3. 自訂新增種類專區 (有新增時才會出現，完全不干擾上方) -->
+        <!-- 自訂種類擴充看板 (若有新增才會出現) -->
         <div id="customCategoriesDashboardContainer" class="space-y-6"></div>
 
         <!-- RECENT ACTIVITY LEDGER -->
@@ -234,7 +235,7 @@
                 <tr class="border-b border-slate-200/70 text-slate-400 font-medium">
                   <th class="py-2.5 px-3">日期</th>
                   <th class="py-2.5 px-3">類別</th>
-                  <th class="py-2.5 px-3">項目 / 學員對象</th>
+                  <th class="py-2.5 px-3">項目 / 學生對象</th>
                   <th class="py-2.5 px-3">工時/規格</th>
                   <th class="py-2.5 px-3">金額</th>
                   <th class="py-2.5 px-3">收款狀態</th>
@@ -252,28 +253,145 @@
       <!-- ======================================================== -->
       <section id="tab-students" class="hidden space-y-6">
         <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-          <!-- CRM Top Toolbar -->
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <h3 class="font-bold text-slate-900 text-lg">學員 CRM 管理庫</h3>
-              <p class="text-xs text-slate-500">獨立管理學員時薪與進度，可自由擴充種類標籤。</p>
+              <p class="text-xs text-slate-500">獨立管理學員時薪與進度，可擴充自訂種類。</p>
             </div>
             <div class="flex flex-wrap items-center gap-2.5">
-              <!-- CRM 切換標籤列 (含低調的新增按鈕) -->
-              <div class="inline-flex rounded-xl bg-slate-100 p-1 items-center overflow-x-auto max-w-full" id="crmCategoryTabs">
-                <!-- 動態注入標籤 -->
-              </div>
-
+              <div class="inline-flex rounded-xl bg-slate-100 p-1 items-center overflow-x-auto max-w-full" id="crmCategoryTabs"></div>
               <input type="text" id="studentSearchInput" oninput="renderStudentCRM()" placeholder="搜尋姓名、備註或場館..." class="px-3 py-1.5 text-xs md:text-sm rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 w-36 sm:w-44">
-              
               <button id="crmAddBtn" onclick="openStudentModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-medium shadow-sm transition">
                 <span id="crmAddBtnText">+ 新增家教學員</span>
               </button>
             </div>
           </div>
-
-          <!-- Students List Cards -->
           <div id="studentCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TAB: EXPENSE (全新獨立專屬支出分頁，專治錢錢消失)       -->
+      <!-- ======================================================== -->
+      <section id="tab-expense" class="hidden space-y-6">
+        
+        <!-- 頂部實質淨利與收支對比看板 -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 rounded-2xl p-5 md:p-6 text-white shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+            <div>
+              <span class="text-xs text-slate-400 font-medium">本月收支結算與真實結餘</span>
+              <h3 class="text-2xl md:text-3xl font-extrabold text-emerald-400 font-mono mt-0.5" id="expNetProfit">NT$ 0</h3>
+              <p class="text-xs text-slate-300 mt-1">實收進帳扣除生活支出後，真正存進口袋的淨利潤。</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-left sm:text-right bg-slate-800/60 p-3 rounded-xl border border-slate-700/60">
+              <div>
+                <span class="text-[11px] text-slate-400 block">本月總實收</span>
+                <span class="text-sm md:text-base font-bold text-white font-mono" id="expTotalIncome">NT$ 0</span>
+              </div>
+              <div>
+                <span class="text-[11px] text-slate-400 block">本月總生活支出</span>
+                <span class="text-sm md:text-base font-bold text-rose-400 font-mono" id="expTotalExpenseHeader">NT$ 0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 支出分類即時佔比條 -->
+          <div class="mt-4">
+            <div class="flex justify-between text-[11px] text-slate-400 mb-1.5">
+              <span>主要開銷結構</span>
+              <span id="expTopCategoryHint">本月開銷統計中</span>
+            </div>
+            <div class="w-full bg-slate-700/80 rounded-full h-2 overflow-hidden flex" id="expCategoryProgressBar"></div>
+          </div>
+        </div>
+
+        <!-- 6 大黃金高頻快捷大按鈕 (點擊 2 秒記完) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+          <div class="mb-4 pb-2 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-slate-900 text-base">⚡ 快速記一筆支出</h4>
+              <p class="text-xs text-slate-500 mt-0.5">點擊圖示直接輸入金額，免選繁雜類別，即刻抓漏防浪費。</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <button onclick="openQuickExpenseModal('food')" class="p-4 rounded-xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100/70 hover:border-amber-300 transition text-left flex flex-col justify-between group">
+              <span class="text-2xl mb-1">🍱</span>
+              <div>
+                <strong class="text-xs md:text-sm font-bold text-amber-950 block group-hover:text-amber-800">餐飲伙食</strong>
+                <span class="text-[10px] text-amber-700">三餐、咖啡飲料、點心</span>
+              </div>
+            </button>
+
+            <button onclick="openQuickExpenseModal('traffic')" class="p-4 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 hover:border-blue-300 transition text-left flex flex-col justify-between group">
+              <span class="text-2xl mb-1">⛽</span>
+              <div>
+                <strong class="text-xs md:text-sm font-bold text-blue-950 block group-hover:text-blue-800">交通通勤</strong>
+                <span class="text-[10px] text-blue-700">加油、高鐵、捷運、停車</span>
+              </div>
+            </button>
+
+            <button onclick="openQuickExpenseModal('daily')" class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100/70 hover:border-emerald-300 transition text-left flex flex-col justify-between group">
+              <span class="text-2xl mb-1">🛒</span>
+              <div>
+                <strong class="text-xs md:text-sm font-bold text-emerald-950 block group-hover:text-emerald-800">日常雜支</strong>
+                <span class="text-[10px] text-emerald-700">超商採買、生活耗材</span>
+              </div>
+            </button>
+
+            <button onclick="openQuickExpenseModal('study')" class="p-4 rounded-xl border border-indigo-200 bg-indigo-50/60 hover:bg-indigo-100/70 hover:border-indigo-300 transition text-left flex flex-col justify-between group">
+              <span class="text-2xl mb-1">📚</span>
+              <div>
+                <strong class="text-xs md:text-sm font-bold text-indigo-950 block group-hover:text-indigo-800">學習進修</strong>
+                <span class="text-[10px] text-indigo-700">教材買書、檢定、培訓</span>
+              </div>
+            </button>
+
+            <button onclick="openQuickExpenseModal('sport')" class="p-4 rounded-xl border border-teal-200 bg-teal-50/60 hover:bg-teal-100/70 hover:border-teal-300 transition text-left flex flex-col justify-between group">
+              <span class="text-2xl mb-1">🏃</span>
+              <div>
+                <strong class="text-xs md:text-sm font-bold text-teal-950 block group-hover:text-teal-800">運動健康</strong>
+                <span class="text-[10px] text-teal-700">泳票、場租、運動備品</span>
+              </div>
+            </button>
+
+            <button onclick="openQuickExpenseModal('travel')" class="p-4 rounded-xl border border-purple-200 bg-purple-50/60 hover:bg-purple-100/70 hover:border-purple-300 transition text-left flex flex-col justify-between group">
+              <span class="text-2xl mb-1">🌴</span>
+              <div>
+                <strong class="text-xs md:text-sm font-bold text-purple-950 block group-hover:text-purple-800">休閒出遊</strong>
+                <span class="text-[10px] text-purple-700">聚餐、出遊放鬆、營隊旅行</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="mt-3 text-right">
+            <button onclick="openQuickExpenseModal('bills')" class="text-xs text-slate-500 hover:text-slate-800 font-medium inline-flex items-center gap-1">
+              <span>📱 固定帳單 / 訂閱 / 其他自訂花費 &rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 支出歷史清單 -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="font-bold text-slate-900 text-base">本月日常花費明細</h4>
+            <span class="text-xs text-rose-600 font-bold font-mono" id="expListTotal">本月支出：NT$ 0</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs md:text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-400 font-medium">
+                  <th class="py-2.5 px-3">日期</th>
+                  <th class="py-2.5 px-3">類別</th>
+                  <th class="py-2.5 px-3">項目說明 / 備註</th>
+                  <th class="py-2.5 px-3 font-semibold">支出金額</th>
+                  <th class="py-2.5 px-3 text-right">操作</th>
+                </tr>
+              </thead>
+              <tbody id="expenseRecordsBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -292,7 +410,7 @@
             </button>
           </div>
 
-          <!-- Filter Toolbar (支援搜尋公司/付款單位) -->
+          <!-- Filter Toolbar (支援公司名) -->
           <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5 mb-5 p-3.5 bg-slate-50 rounded-xl border border-slate-200/70">
             <div>
               <label class="block text-[11px] font-medium text-slate-500 mb-1">類別篩選</label>
@@ -317,7 +435,7 @@
               <input type="month" id="filterMonth" onchange="renderRecordsTable()" class="w-full text-xs rounded-lg border border-slate-200 bg-white py-1.5 px-2 focus:ring-1 focus:ring-brand-500">
             </div>
             <div>
-              <label class="block text-[11px] font-medium text-slate-500 mb-1">關鍵字搜尋 (支援公司名稱)</label>
+              <label class="block text-[11px] font-medium text-slate-500 mb-1">關鍵字搜尋 (支援公司名)</label>
               <input type="text" id="filterKeyword" oninput="renderRecordsTable()" placeholder="學生名、場館公司、備註..." class="w-full text-xs rounded-lg border border-slate-200 bg-white py-1.5 px-2.5 focus:ring-1 focus:ring-brand-500">
             </div>
           </div>
@@ -405,7 +523,7 @@
     </div>
   </main>
 
-  <!-- ==================== MOBILE BOTTOM BAR ==================== -->
+  <!-- ==================== MOBILE BOTTOM BAR (新增「支出」分頁) ==================== -->
   <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 px-3 py-1.5 flex justify-around">
     <button onclick="switchTab('dashboard')" data-mobtab="dashboard" class="flex flex-col items-center py-1 text-brand-600">
       <svg class="icon w-5 h-5" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
@@ -415,11 +533,9 @@
       <svg class="icon w-5 h-5" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
       <span class="text-[10px] mt-0.5 font-medium">學員</span>
     </button>
-    <button onclick="openUniversalRecordModal()" class="flex flex-col items-center py-1 -mt-3">
-      <div class="w-11 h-11 rounded-full bg-brand-600 text-white flex items-center justify-center shadow-lg shadow-brand-500/30 font-bold text-lg">
-        +
-      </div>
-      <span class="text-[10px] mt-0.5 font-medium text-slate-600">記帳</span>
+    <button onclick="switchTab('expense')" data-mobtab="expense" class="flex flex-col items-center py-1 text-slate-400">
+      <svg class="icon w-5 h-5 text-rose-500" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span class="text-[10px] mt-0.5 font-semibold text-rose-600">支出</span>
     </button>
     <button onclick="switchTab('records')" data-mobtab="records" class="flex flex-col items-center py-1 text-slate-400">
       <svg class="icon w-5 h-5" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/></svg>
@@ -432,8 +548,50 @@
   </div>
 
   <!-- ======================================================== -->
-  <!-- MODAL: QUICK TUTORING LOG (支援時薪折扣手動覆寫)         -->
+  <!-- MODAL: 快速記一筆支出彈窗 (QUICK EXPENSE LOG)             -->
   <!-- ======================================================== -->
+  <div id="quickExpenseModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-rose-600 to-pink-600 px-5 py-3.5 text-white flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="font-bold text-sm md:text-base" id="qexpModalTitle">記一筆支出</h3>
+          <p class="text-xs text-rose-100" id="qexpModalSub">快速記錄生活開銷</p>
+        </div>
+        <button type="button" onclick="closeModal('quickExpenseModal')" class="text-rose-200 hover:text-white p-1 text-2xl font-bold leading-none">&times;</button>
+      </div>
+
+      <form onsubmit="handleQuickExpenseSubmit(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
+        <input type="hidden" id="qexpCategoryKey">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">消費日期</label>
+          <input type="date" id="qexpDate" required class="w-full text-xs md:text-sm rounded-xl border border-slate-300 p-2.5 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">支出金額 (NTD) <span class="text-rose-500">*</span></label>
+          <div class="relative">
+            <span class="absolute left-3 top-2.5 text-xs text-rose-500 font-bold">NT$</span>
+            <input type="number" id="qexpAmount" required min="1" step="1" placeholder="例如：120" class="w-full text-base font-bold text-rose-600 rounded-xl border border-rose-300 pl-11 p-2.5 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">備註說明 (選填)</label>
+          <input type="text" id="qexpNote" placeholder="例如：午餐便當、高鐵票、咖啡" class="w-full text-xs md:text-sm rounded-xl border border-slate-300 p-2.5 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
+          <button type="button" onclick="closeModal('quickExpenseModal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100">取消</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm">
+            儲存支出
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 原有家教登記彈窗 (QUICK TUTOR MODAL) -->
   <div id="quickTutorModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="bg-gradient-to-r from-sky-600 to-brand-600 px-5 py-3.5 text-white flex items-center justify-between shrink-0">
@@ -513,9 +671,7 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: SWIM LOGGING (支援 1.5 堂扣除與上下滾動)         -->
-  <!-- ======================================================== -->
+  <!-- 原有游泳簽到扣堂彈窗 (QUICK SWIM MODAL) -->
   <div id="quickSwimModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-5 py-3.5 text-white flex items-center justify-between shrink-0">
@@ -588,9 +744,7 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: SWIM RENEW (一鍵續報新一期)                       -->
-  <!-- ======================================================== -->
+  <!-- 原有游泳續報彈窗 (SWIM RENEW MODAL) -->
   <div id="swimRenewModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-3.5 text-white flex items-center justify-between shrink-0">
@@ -633,9 +787,7 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: ADD / EDIT TUTOR STUDENT                          -->
-  <!-- ======================================================== -->
+  <!-- 原有家教學生編輯彈窗 (STUDENT MODAL) -->
   <div id="studentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
@@ -702,9 +854,7 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: ADD / EDIT SWIM STUDENT (手動校正第幾堂)         -->
-  <!-- ======================================================== -->
+  <!-- 原有游泳學員編輯彈窗 (SWIM STUDENT MODAL) -->
   <div id="swimStudentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
@@ -777,9 +927,7 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: 新增自訂種類彈窗 (極簡 2 欄位，不影響其他地方)      -->
-  <!-- ======================================================== -->
+  <!-- 原有新增自訂種類彈窗 (ADD CATEGORY MODAL) -->
   <div id="addCategoryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
@@ -814,9 +962,7 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: UNIVERSAL RECORD LOGGER                           -->
-  <!-- ======================================================== -->
+  <!-- 原有通用登記收入彈窗 (UNIVERSAL RECORD MODAL) -->
   <div id="universalRecordModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
@@ -973,9 +1119,7 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODAL: DATA MANAGEMENT                                   -->
-  <!-- ======================================================== -->
+  <!-- 原有資料庫管理彈窗 (DATA MANAGE MODAL) -->
   <div id="dataManageModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
@@ -983,11 +1127,11 @@
         <button type="button" onclick="closeModal('dataManageModal')" class="text-slate-400 hover:text-slate-700 p-1 text-2xl font-bold leading-none">&times;</button>
       </div>
       <div class="p-5 space-y-4 text-xs md:text-sm overflow-y-auto flex-1 custom-scrollbar">
-        <p class="text-slate-500 text-xs">系統將所有學生檔案與收支紀錄自動保存在您的瀏覽器中，無任何隱私資料上傳。您可以隨時匯出備份 JSON 或匯入還原。</p>
+        <p class="text-slate-500 text-xs">系統將所有學生檔案、收入與生活支出紀錄自動保存在瀏覽器中。隨時匯出備份 JSON，換手機也能一鍵還原。</p>
 
         <div class="space-y-2">
           <button onclick="downloadJsonBackup()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium flex items-center justify-center gap-2 transition">
-            <span>下載完整備份 (JSON 格式)</span>
+            <span>下載完整備份 (含收入與支出 JSON)</span>
           </button>
           
           <label class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium flex items-center justify-center gap-2 cursor-pointer transition">
@@ -996,7 +1140,7 @@
           </label>
 
           <button onclick="confirmResetToSeedData()" class="w-full py-2.5 px-4 border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-xl font-medium flex items-center justify-center gap-2 transition">
-            <span>重置為預設乾淨範例資料</span>
+            <span>重置為預設範例資料</span>
           </button>
         </div>
       </div>
@@ -1014,8 +1158,20 @@
     const STORAGE_KEY_SWIM = 'ffm_swim_v1';
     const STORAGE_KEY_CUSTOM_CATS = 'ffm_custom_cats_v1';
     const STORAGE_KEY_RECORDS = 'ffm_records_v1';
+    const STORAGE_KEY_EXPENSES = 'ffm_expenses_v1';
 
-    // 100% 去識別化示範種子資料
+    // 支出類別定義 (6 大黃金高頻分類 + 固定帳單)
+    const EXPENSE_CATEGORIES = {
+      'food': { name: '餐飲伙食', icon: '🍱', color: '#f59e0b', bgClass: 'bg-amber-100 text-amber-800 border-amber-200' },
+      'traffic': { name: '交通通勤', icon: '⛽', color: '#3b82f6', bgClass: 'bg-blue-100 text-blue-800 border-blue-200' },
+      'daily': { name: '日常雜支', icon: '🛒', color: '#10b981', bgClass: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+      'study': { name: '學習進修', icon: '📚', color: '#6366f1', bgClass: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
+      'sport': { name: '運動健康', icon: '🏃', color: '#0d9488', bgClass: 'bg-teal-100 text-teal-800 border-teal-200' },
+      'travel': { name: '休閒出遊', icon: '🌴', color: '#8b5cf6', bgClass: 'bg-purple-100 text-purple-800 border-purple-200' },
+      'bills': { name: '固定帳單/其他', icon: '📱', color: '#64748b', bgClass: 'bg-slate-100 text-slate-700 border-slate-200' }
+    };
+
+    // 去識別化示範種子資料
     const SEED_STUDENTS = [
       {
         id: 'std_01',
@@ -1086,12 +1242,19 @@
       }
     ];
 
+    const SEED_EXPENSES = [
+      { id: 'exp_01', category: 'food', date: todayStr, amount: 120, note: '午餐便當' },
+      { id: 'exp_02', category: 'traffic', date: todayStr, amount: 150, note: '加油通勤' },
+      { id: 'exp_03', category: 'sport', date: todayStr, amount: 100, note: '泳池門票' }
+    ];
+
     let students = [];
     let swimStudents = [];
-    let customCategories = []; // 使用者自訂擴充種類（如羽球、健身）
+    let customCategories = [];
     let records = [];
+    let expenses = [];
     let currentActiveTab = 'dashboard';
-    let currentCRMType = 'tutoring'; // 'tutoring' | 'swim' | 自訂種類ID
+    let currentCRMType = 'tutoring';
 
     let categoryChartInstance = null;
     let trendChartInstance = null;
@@ -1101,34 +1264,30 @@
       const storedSwim = localStorage.getItem(STORAGE_KEY_SWIM);
       const storedCustom = localStorage.getItem(STORAGE_KEY_CUSTOM_CATS);
       const storedRecords = localStorage.getItem(STORAGE_KEY_RECORDS);
+      const storedExpenses = localStorage.getItem(STORAGE_KEY_EXPENSES);
 
       students = storedStudents ? JSON.parse(storedStudents) : SEED_STUDENTS;
       swimStudents = storedSwim ? JSON.parse(storedSwim) : SEED_SWIM;
       customCategories = storedCustom ? JSON.parse(storedCustom) : [];
       records = storedRecords ? JSON.parse(storedRecords) : SEED_RECORDS;
+      expenses = storedExpenses ? JSON.parse(storedExpenses) : SEED_EXPENSES;
 
       saveStudents();
       saveSwimStudents();
       saveCustomCategories();
       saveRecords();
+      saveExpenses();
     }
 
-    function saveStudents() {
-      localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
-    }
-    function saveSwimStudents() {
-      localStorage.setItem(STORAGE_KEY_SWIM, JSON.stringify(swimStudents));
-    }
-    function saveCustomCategories() {
-      localStorage.setItem(STORAGE_KEY_CUSTOM_CATS, JSON.stringify(customCategories));
-    }
-    function saveRecords() {
-      localStorage.setItem(STORAGE_KEY_RECORDS, JSON.stringify(records));
-    }
+    function saveStudents() { localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students)); }
+    function saveSwimStudents() { localStorage.setItem(STORAGE_KEY_SWIM, JSON.stringify(swimStudents)); }
+    function saveCustomCategories() { localStorage.setItem(STORAGE_KEY_CUSTOM_CATS, JSON.stringify(customCategories)); }
+    function saveRecords() { localStorage.setItem(STORAGE_KEY_RECORDS, JSON.stringify(records)); }
+    function saveExpenses() { localStorage.setItem(STORAGE_KEY_EXPENSES, JSON.stringify(expenses)); }
 
     function switchTab(tabId) {
       currentActiveTab = tabId;
-      ['dashboard', 'students', 'records', 'analytics'].forEach(id => {
+      ['dashboard', 'students', 'expense', 'records', 'analytics'].forEach(id => {
         const el = document.getElementById(`tab-${id}`);
         if (el) el.classList.toggle('hidden', id !== tabId);
       });
@@ -1151,6 +1310,7 @@
       const titles = {
         'dashboard': '工作台 & 快速登記上課',
         'students': '學員管理資料庫 (Student CRM)',
+        'expense': '生活支出記帳 & 淨利分析',
         'records': '全方位收支帳本 (Ledger)',
         'analytics': '財務月報、催款與收入結構分析'
       };
@@ -1158,10 +1318,14 @@
 
       if (tabId === 'dashboard') renderDashboard();
       if (tabId === 'students') renderStudentCRM();
+      if (tabId === 'expense') renderExpenseTab();
       if (tabId === 'records') renderRecordsTable();
       if (tabId === 'analytics') renderAnalyticsView();
     }
 
+    /* ----------------------------------------------------
+     * 1. DASHBOARD & KPI (經典介面不變，側邊同步顯示淨利)
+     * ---------------------------------------------------- */
     function renderDashboard() {
       updateKPISummaries();
       renderQuickStudentCards();
@@ -1173,21 +1337,22 @@
     function updateKPISummaries() {
       const currentMonth = new Date().toISOString().substring(0, 7);
       const monthRecords = records.filter(r => r.date && r.date.startsWith(currentMonth));
+      const monthExpenses = expenses.filter(e => e.date && e.date.startsWith(currentMonth));
       
       const totalGross = monthRecords.reduce((sum, r) => r.status !== 'cancelled' ? sum + Number(r.amount || 0) : sum, 0);
       const totalPaid = monthRecords.reduce((sum, r) => r.status === 'paid' ? sum + Number(r.amount || 0) : sum, 0);
       const totalUnpaid = records.reduce((sum, r) => r.status === 'unpaid' ? sum + Number(r.amount || 0) : sum, 0);
       const unpaidCount = records.filter(r => r.status === 'unpaid').length;
 
+      const totalExpense = monthExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+      const netProfit = totalPaid - totalExpense; // 實收進帳扣除支出 = 淨存入
+
       const monthHours = monthRecords.reduce((sum, r) => {
-        if (r.status !== 'cancelled') {
-          return sum + (Number(r.hours || r.units || 0));
-        }
+        if (r.status !== 'cancelled') return sum + (Number(r.hours || r.units || 0));
         return sum;
       }, 0);
 
       const paidPercent = totalGross > 0 ? Math.round((totalPaid / totalGross) * 100) : 0;
-
       const activeStudentsList = students.filter(s => s.active);
       const activeSwimList = swimStudents.filter(s => s.active);
       const totalActiveCount = activeStudentsList.length + activeSwimList.length;
@@ -1202,8 +1367,9 @@
       document.getElementById('kpiActiveStudents').innerHTML = `${totalActiveCount} <span class="text-xs font-normal text-slate-400">位</span>`;
       document.getElementById('kpiEstWeekly').textContent = `NT$ ${estWeekly.toLocaleString()}`;
 
-      document.getElementById('sidebarTotalGross').textContent = `NT$ ${totalGross.toLocaleString()}`;
-      document.getElementById('sidebarUnpaid').textContent = `NT$ ${totalUnpaid.toLocaleString()}`;
+      // 側邊即時淨利
+      document.getElementById('sidebarNetProfit').textContent = `NT$ ${netProfit.toLocaleString()}`;
+      document.getElementById('sidebarTotalExpense').textContent = `NT$ ${totalExpense.toLocaleString()}`;
 
       const monthBadge = document.getElementById('currentMonthBadge');
       if (monthBadge) monthBadge.textContent = `${currentMonth} 月度結算中`;
@@ -1214,7 +1380,6 @@
       if (!container) return;
 
       const activeList = students.filter(s => s.active);
-
       if (activeList.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
@@ -1275,7 +1440,6 @@
       if (!container) return;
 
       const activeList = swimStudents.filter(s => s.active);
-
       if (activeList.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
@@ -1334,7 +1498,6 @@
       }).join('');
     }
 
-    // 只有在你有自訂新增種類時，首頁才會在下方安靜出現該區塊
     function renderCustomCategoriesDashboard() {
       const container = document.getElementById('customCategoriesDashboardContainer');
       if (!container) return;
@@ -1375,16 +1538,155 @@
     }
 
     /* ----------------------------------------------------
-     * 4. QUICK TUTORING LOG (支援手動折扣覆寫)
+     * 2. EXPENSE TAB (全新獨立支出專區邏輯)
+     * ---------------------------------------------------- */
+    function renderExpenseTab() {
+      const currentMonth = new Date().toISOString().substring(0, 7);
+      const monthRecords = records.filter(r => r.date && r.date.startsWith(currentMonth));
+      const monthExpenses = expenses.filter(e => e.date && e.date.startsWith(currentMonth));
+
+      const totalPaidIncome = monthRecords.reduce((sum, r) => r.status === 'paid' ? sum + Number(r.amount || 0) : sum, 0);
+      const totalExpense = monthExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+      const netProfit = totalPaidIncome - totalExpense;
+
+      // 1. 看板數據
+      document.getElementById('expNetProfit').textContent = `NT$ ${netProfit.toLocaleString()}`;
+      document.getElementById('expTotalIncome').textContent = `NT$ ${totalPaidIncome.toLocaleString()}`;
+      document.getElementById('expTotalExpenseHeader').textContent = `NT$ ${totalExpense.toLocaleString()}`;
+      document.getElementById('expListTotal').textContent = `本月總支出：NT$ ${totalExpense.toLocaleString()}`;
+
+      // 2. 佔比進度條
+      const progressBar = document.getElementById('expCategoryProgressBar');
+      const hint = document.getElementById('expTopCategoryHint');
+      if (totalExpense === 0) {
+        progressBar.innerHTML = `<div class="w-full bg-slate-600 h-2"></div>`;
+        hint.textContent = '本月尚無任何生活支出';
+      } else {
+        const catSums = {};
+        monthExpenses.forEach(e => {
+          catSums[e.category] = (catSums[e.category] || 0) + Number(e.amount || 0);
+        });
+
+        progressBar.innerHTML = Object.keys(catSums).map(catKey => {
+          const cfg = EXPENSE_CATEGORIES[catKey] || EXPENSE_CATEGORIES['bills'];
+          const pct = Math.round((catSums[catKey] / totalExpense) * 100);
+          return `<div style="width: ${pct}%; background-color: ${cfg.color};" title="${cfg.name}: ${pct}%" class="h-2"></div>`;
+        }).join('');
+
+        // 找出最高佔比
+        const topCat = Object.entries(catSums).sort((a,b) => b[1] - a[1])[0];
+        if (topCat) {
+          const cfg = EXPENSE_CATEGORIES[topCat[0]] || EXPENSE_CATEGORIES['bills'];
+          hint.textContent = `最大開銷：${cfg.name} (佔比 ${Math.round((topCat[1] / totalExpense) * 100)}%)`;
+        }
+      }
+
+      // 3. 支出清單表格
+      const tbody = document.getElementById('expenseRecordsBody');
+      if (!tbody) return;
+
+      const sortedExp = [...monthExpenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+      if (sortedExp.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-xs text-slate-400">本月尚無任何支出記錄，點擊上方大圖示即可快速記一筆。</td></tr>`;
+        return;
+      }
+
+      const trashSvg = `
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      `;
+
+      tbody.innerHTML = sortedExp.map(exp => {
+        const catCfg = EXPENSE_CATEGORIES[exp.category] || EXPENSE_CATEGORIES['bills'];
+        return `
+          <tr class="hover:bg-slate-50/80 transition text-xs">
+            <td class="py-3 px-3 font-medium text-slate-700">${exp.date}</td>
+            <td class="py-3 px-3">
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold border ${catCfg.bgClass}">
+                ${catCfg.icon} ${catCfg.name}
+              </span>
+            </td>
+            <td class="py-3 px-3 text-slate-800 font-medium">${escapeHtml(exp.note || '-')}</td>
+            <td class="py-3 px-3 font-bold text-rose-600 font-mono text-sm">NT$ ${Number(exp.amount).toLocaleString()}</td>
+            <td class="py-3 px-3 text-right">
+              <button type="button" onclick="deleteExpense('${exp.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition inline-flex items-center justify-center" title="刪除此筆支出">
+                ${trashSvg}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openQuickExpenseModal(categoryKey) {
+      const cfg = EXPENSE_CATEGORIES[categoryKey] || EXPENSE_CATEGORIES['bills'];
+      document.getElementById('qexpCategoryKey').value = categoryKey;
+      document.getElementById('qexpModalTitle').textContent = `${cfg.icon} 記一筆【${cfg.name}】`;
+      document.getElementById('qexpModalSub').textContent = '輸入金額與簡短備註即可';
+      document.getElementById('qexpDate').value = todayStr;
+      document.getElementById('qexpAmount').value = '';
+      document.getElementById('qexpNote').value = '';
+
+      openModal('quickExpenseModal');
+      setTimeout(() => {
+        document.getElementById('qexpAmount').focus();
+      }, 100);
+    }
+
+    function handleQuickExpenseSubmit(e) {
+      e.preventDefault();
+      const categoryKey = document.getElementById('qexpCategoryKey').value;
+      const date = document.getElementById('qexpDate').value;
+      const amount = parseFloat(document.getElementById('qexpAmount').value) || 0;
+      const note = document.getElementById('qexpNote').value.trim();
+
+      if (amount <= 0) return;
+
+      const newExpense = {
+        id: 'exp_' + Date.now(),
+        category: categoryKey,
+        date,
+        amount,
+        note
+      };
+
+      expenses.unshift(newExpense);
+      saveExpenses();
+      closeModal('quickExpenseModal');
+
+      const cfg = EXPENSE_CATEGORIES[categoryKey] || EXPENSE_CATEGORIES['bills'];
+      showToast(`已成功記錄【${cfg.name}】：NT$ ${amount.toLocaleString()}`, 'success');
+
+      updateKPISummaries();
+      renderExpenseTab();
+    }
+
+    function deleteExpense(expenseId) {
+      const idx = expenses.findIndex(e => e.id === expenseId);
+      if (idx === -1) return;
+
+      const item = expenses[idx];
+      if (confirm(`確定要刪除這筆【NT$ ${item.amount}】的支出紀錄嗎？`)) {
+        expenses.splice(idx, 1);
+        saveExpenses();
+        showToast('已刪除支出紀錄', 'info');
+        updateKPISummaries();
+        renderExpenseTab();
+      }
+    }
+
+    /* ----------------------------------------------------
+     * 3. QUICK TUTOR LOG (支援手動折扣覆寫)
      * ---------------------------------------------------- */
     let isQuickTutorManualEdited = false;
 
     function openQuickTutorModal(studentId) {
       const student = students.find(s => s.id === studentId);
-      if (!student) {
-        showToast('找不到該學生資料', 'error');
-        return;
-      }
+      if (!student) return;
 
       isQuickTutorManualEdited = false;
       document.getElementById('qtStudentId').value = student.id;
@@ -1399,17 +1701,13 @@
       openModal('quickTutorModal');
     }
 
-    function markQuickTutorManualEdit() {
-      isQuickTutorManualEdited = true;
-    }
+    function markQuickTutorManualEdit() { isQuickTutorManualEdited = true; }
 
     function recalcQuickTutorTotal(force = false) {
       if (isQuickTutorManualEdited && !force) return;
-
       const hours = parseFloat(document.getElementById('qtHours').value) || 0;
       const rate = parseFloat(document.getElementById('qtRate').value) || 0;
-      const total = Math.round(hours * rate);
-      document.getElementById('qtTotal').value = total;
+      document.getElementById('qtTotal').value = Math.round(hours * rate);
     }
 
     function handleQuickTutorSubmit(e) {
@@ -1428,14 +1726,14 @@
       const newRecord = {
         id: 'rec_' + Date.now(),
         category: 'tutoring',
-        date: date,
+        date,
         studentId: student.id,
         title: student.name,
-        hours: hours,
-        rate: rate,
+        hours,
+        rate,
         amount: total,
         status: paymentStatus,
-        note: note,
+        note,
         createdAt: new Date().toISOString()
       };
 
@@ -1451,7 +1749,7 @@
     }
 
     /* ----------------------------------------------------
-     * 5. QUICK SWIM LOG & RENEW (支援 1.5 堂扣除與金額覆寫)
+     * 4. QUICK SWIM LOG & RENEW (支援 1.5 堂扣除與金額覆寫)
      * ---------------------------------------------------- */
     function openQuickSwimModal(swimId) {
       const sw = swimStudents.find(s => s.id === swimId);
@@ -1496,7 +1794,7 @@
       const newRecord = {
         id: 'rec_' + Date.now(),
         category: 'swim',
-        date: date,
+        date,
         swimId: sw.id,
         title: `${sw.name} (第 ${sw.currentPeriod || 1} 期)`,
         payer: sw.company,
@@ -1557,10 +1855,9 @@
     }
 
     /* ----------------------------------------------------
-     * 6. STUDENT CRM (動態標籤 + 低調新增小按鈕)
+     * 5. STUDENT CRM (動態標籤 + 低調小加號)
      * ---------------------------------------------------- */
     function renderStudentCRM() {
-      // 1. 動態渲染切換標籤（家教、游泳永遠在，後方附帶自訂種類與低調小加號）
       const tabsContainer = document.getElementById('crmCategoryTabs');
       if (tabsContainer) {
         let tabsHtml = `
@@ -1581,16 +1878,14 @@
           `;
         });
 
-        // 最右邊低調的「＋」按鈕
         tabsHtml += `
-          <button onclick="openModal('addCategoryModal')" title="新增其他教學種類" class="ml-1 px-2 py-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg text-xs font-bold transition">
+          <button onclick="openModal('addCategoryModal')" title="新增自訂教學種類" class="ml-1 px-2 py-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg text-xs font-bold transition">
             ＋
           </button>
         `;
         tabsContainer.innerHTML = tabsHtml;
       }
 
-      // 2. 渲染對應卡片
       const container = document.getElementById('studentCardsContainer');
       if (!container) return;
 
@@ -1684,7 +1979,6 @@
           `;
         }).join('');
       } else {
-        // 自訂種類
         const customCat = customCategories.find(c => c.id === currentCRMType);
         addBtnText.textContent = `+ 新增${customCat?.name || ''}紀錄`;
         addBtn.className = 'bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-medium shadow-sm transition';
@@ -1704,18 +1998,13 @@
       renderStudentCRM();
     }
 
-    // 自訂種類新增與刪除
     function handleCreateCustomCategory(e) {
       e.preventDefault();
       const name = document.getElementById('customCatName').value.trim();
       const mode = document.getElementById('customCatMode').value;
       if (!name) return;
 
-      const newCat = {
-        id: 'cat_' + Date.now(),
-        name,
-        mode
-      };
+      const newCat = { id: 'cat_' + Date.now(), name, mode };
       customCategories.push(newCat);
       saveCustomCategories();
       document.getElementById('customCatName').value = '';
@@ -1901,7 +2190,7 @@
     }
 
     /* ----------------------------------------------------
-     * 7. UNIVERSAL RECORD LOGGER
+     * 6. UNIVERSAL RECORD LOGGER
      * ---------------------------------------------------- */
     let currentUnivCategory = 'tutoring';
 
@@ -2071,7 +2360,7 @@
     }
 
     /* ----------------------------------------------------
-     * 8. 全方位帳本 (支援關鍵字搜尋付款單位/公司)
+     * 7. 全方位帳本 (支援關鍵字搜尋付款單位/公司)
      * ---------------------------------------------------- */
     function renderRecordsTable() {
       const tbody = document.getElementById('recordsFullTableBody');
@@ -2197,12 +2486,10 @@
       if (idx === -1) return;
 
       const title = records[idx].title;
-      const confirmDelete = window.confirm(`確定要刪除這筆【${title}】的收入明細嗎？`);
-      if (confirmDelete) {
+      if (confirm(`確定要刪除這筆【${title}】的收入明細嗎？`)) {
         records.splice(idx, 1);
         saveRecords();
         showToast(`已刪除「${title}」紀錄`, 'info');
-
         renderDashboard();
         if (currentActiveTab === 'records') renderRecordsTable();
         if (currentActiveTab === 'analytics') renderAnalyticsView();
@@ -2210,7 +2497,7 @@
     }
 
     /* ----------------------------------------------------
-     * 9. 財務報表 & 付款人一鍵全額入帳
+     * 8. 財務報表 & 付款人一鍵全額入帳
      * ---------------------------------------------------- */
     function renderAnalyticsView() {
       renderPendingReceivablesList();
@@ -2235,7 +2522,6 @@
         return;
       }
 
-      // 依付款單位 (payer) 或標題 (title) 自動聚合分組
       const groupMap = {};
       unpaidList.forEach(item => {
         const groupKey = (item.payer && item.payer.trim()) ? item.payer.trim() : item.title;
@@ -2311,7 +2597,6 @@
       const tutorTotal = records.filter(r => r.category === 'tutoring' && r.status !== 'cancelled').reduce((sum, r) => sum + Number(r.amount || 0), 0);
       const swimTotal = records.filter(r => r.category === 'swim' && r.status !== 'cancelled').reduce((sum, r) => sum + Number(r.amount || 0), 0);
       const gigTotal = records.filter(r => r.category === 'gig' && r.status !== 'cancelled').reduce((sum, r) => sum + Number(r.amount || 0), 0);
-
       const totalAll = tutorTotal + swimTotal + gigTotal;
 
       if (categoryChartInstance) categoryChartInstance.destroy();
@@ -2405,37 +2690,47 @@
     }
 
     /* ----------------------------------------------------
-     * 10. 備份與還原
+     * 9. 備份與還原 (收入與生活支出一次打包)
      * ---------------------------------------------------- */
     function exportDataCSV() {
-      if (records.length === 0) {
+      if (records.length === 0 && expenses.length === 0) {
         showToast('尚無帳目紀錄可供匯出', 'info');
         return;
       }
 
-      const headers = ['日期', '收入類別', '對象或標題', '付款單位', '時數規格', '單價費率', '總金額', '收款狀態', '備註說明'];
-      const rows = records.map(r => [
+      const headers = ['類型', '日期', '分類/項目', '對象/付款單位', '金額', '狀態/備註'];
+      const incomeRows = records.map(r => [
+        '"收入"',
         `"${r.date}"`,
-        `"${r.category === 'tutoring' ? '家教' : (r.category === 'swim' ? '游泳' : '兼職接案')}"`,
+        `"${r.category === 'tutoring' ? '家教' : (r.category === 'swim' ? '游泳' : '兼職')}"`,
         `"${(r.title || '').replace(/"/g, '""')}"`,
-        `"${(r.payer || '').replace(/"/g, '""')}"`,
-        `"${r.hours || r.units || 1}"`,
-        `"${r.rate || ''}"`,
         `"${r.amount}"`,
-        `"${r.status === 'paid' ? '已入帳' : (r.status === 'unpaid' ? '待收' : '已取消')}"`,
-        `"${(r.note || '').replace(/"/g, '""')}"`
+        `"${r.status === 'paid' ? '已入帳' : '待收'} - ${(r.note || '').replace(/"/g, '""')}"`
       ]);
 
-      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const expenseRows = expenses.map(e => {
+        const catCfg = EXPENSE_CATEGORIES[e.category] || EXPENSE_CATEGORIES['bills'];
+        return [
+          '"支出"',
+          `"${e.date}"`,
+          `"${catCfg.name}"`,
+          '"日常開銷"',
+          `"-${e.amount}"`,
+          `"${(e.note || '').replace(/"/g, '""')}"`
+        ];
+      });
+
+      const allRows = [...incomeRows, ...expenseRows];
+      const csvContent = '\uFEFF' + [headers.join(','), ...allRows.map(e => e.join(','))].join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.setAttribute('href', url);
-      link.setAttribute('download', `Finance_Records_${todayStr}.csv`);
+      link.setAttribute('download', `Finance_Full_Records_${todayStr}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast('已匯出收入帳本 CSV 報表', 'success');
+      showToast('已匯出收支完整 CSV 報表', 'success');
     }
 
     function openDataManageModal() {
@@ -2444,12 +2739,13 @@
 
     function downloadJsonBackup() {
       const backupData = {
-        version: '1.5',
+        version: '3.0',
         exportedAt: new Date().toISOString(),
         students,
         swimStudents,
         customCategories,
-        records
+        records,
+        expenses
       };
       const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -2457,7 +2753,7 @@
       a.href = url;
       a.download = `Finance_Backup_${todayStr}.json`;
       a.click();
-      showToast('JSON 備份檔已開始下載', 'success');
+      showToast('完整備份檔已開始下載 (含收入與支出)', 'success');
     }
 
     function handleImportJson(event) {
@@ -2473,13 +2769,16 @@
             swimStudents = imported.swimStudents || [];
             customCategories = imported.customCategories || [];
             records = imported.records;
+            expenses = imported.expenses || [];
             saveStudents();
             saveSwimStudents();
             saveCustomCategories();
             saveRecords();
+            saveExpenses();
             closeModal('dataManageModal');
             renderDashboard();
             if (currentActiveTab === 'students') renderStudentCRM();
+            if (currentActiveTab === 'expense') renderExpenseTab();
             if (currentActiveTab === 'records') renderRecordsTable();
             if (currentActiveTab === 'analytics') renderAnalyticsView();
             showToast('資料備份已成功還原！', 'success');
@@ -2499,21 +2798,24 @@
         swimStudents = JSON.parse(JSON.stringify(SEED_SWIM));
         customCategories = [];
         records = JSON.parse(JSON.stringify(SEED_RECORDS));
+        expenses = JSON.parse(JSON.stringify(SEED_EXPENSES));
         saveStudents();
         saveSwimStudents();
         saveCustomCategories();
         saveRecords();
+        saveExpenses();
         closeModal('dataManageModal');
         renderDashboard();
         if (currentActiveTab === 'students') renderStudentCRM();
+        if (currentActiveTab === 'expense') renderExpenseTab();
         if (currentActiveTab === 'records') renderRecordsTable();
         if (currentActiveTab === 'analytics') renderAnalyticsView();
-        showToast('已重置為初始範例資料庫', 'info');
+        showToast('已重置為初始示範資料庫', 'info');
       }
     }
 
     /* ----------------------------------------------------
-     * 11. UI 彈窗控制與 TOAST
+     * 10. UI 彈窗控制與 TOAST
      * ---------------------------------------------------- */
     function openModal(modalId) {
       const el = document.getElementById(modalId);
@@ -2566,7 +2868,7 @@
 
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          ['quickTutorModal', 'quickSwimModal', 'swimRenewModal', 'studentModal', 'swimStudentModal', 'addCategoryModal', 'universalRecordModal', 'dataManageModal'].forEach(closeModal);
+          ['quickExpenseModal', 'quickTutorModal', 'quickSwimModal', 'swimRenewModal', 'studentModal', 'swimStudentModal', 'addCategoryModal', 'universalRecordModal', 'dataManageModal'].forEach(closeModal);
         }
       });
     };
