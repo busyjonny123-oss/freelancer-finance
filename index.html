@@ -156,50 +156,52 @@
       <!-- ======================================================== -->
       <section id="tab-dashboard" class="space-y-6">
         
-        <!-- 6 格工整卡片矩陣：手機 2 欄 / 電腦 3 欄 -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3.5 md:gap-4.5">
+       <!-- KPI METRICS CARDS (原汁原味字體與比例，單純加兩格) -->
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3.5 md:gap-5">
           <!-- 1. 收入 -->
-          <div class="bg-white p-4.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-            <div class="text-xs font-medium text-slate-500 mb-1">本月總應收 (Gross)</div>
-            <div class="text-xl md:text-2xl font-bold text-slate-900 font-mono tracking-tight" id="kpiMonthGross">NT$ 0</div>
-            <p class="text-[11px] text-slate-400 mt-1.5"><span id="kpiPaidPercent" class="text-emerald-600 font-semibold">0%</span> 已實收</p>
+          <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="text-xs font-medium text-slate-500 mb-2">本月總應收 (Gross)</div>
+            <div class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight" id="kpiMonthGross">NT$ 0</div>
+            <p class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <span id="kpiPaidPercent" class="text-emerald-600 font-semibold">0%</span> 已實收入帳
+            </p>
           </div>
 
           <!-- 2. 應收 -->
-          <div class="bg-white p-4.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-            <div class="text-xs font-medium text-slate-500 mb-1">待收應收 (Unpaid)</div>
-            <div class="text-xl md:text-2xl font-bold text-amber-600 font-mono tracking-tight" id="kpiUnpaidGross">NT$ 0</div>
-            <p class="text-[11px] text-slate-400 mt-1.5" id="kpiUnpaidCount">0 筆款項尚未入帳</p>
+          <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="text-xs font-medium text-slate-500 mb-2">待收應收帳款 (Unpaid)</div>
+            <div class="text-xl md:text-2xl font-bold text-amber-600 tracking-tight" id="kpiUnpaidGross">NT$ 0</div>
+            <p class="text-[11px] text-slate-400 mt-1" id="kpiUnpaidCount">0 筆款項尚未入帳</p>
           </div>
 
           <!-- 3. 支出 -->
-          <div class="bg-white p-4.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-            <div class="text-xs font-medium text-slate-500 mb-1">本月生活支出</div>
-            <div class="text-xl md:text-2xl font-bold text-amber-800 font-mono tracking-tight" id="kpiMonthExpense">NT$ 0</div>
-            <p class="text-[11px] text-slate-400 mt-1.5 truncate" id="kpiExpenseTopCat">主要開銷統計中</p>
+          <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="text-xs font-medium text-slate-500 mb-2">本月生活支出</div>
+            <div class="text-xl md:text-2xl font-bold text-amber-800 tracking-tight" id="kpiMonthExpense">NT$ 0</div>
+            <p class="text-[11px] text-slate-400 mt-1 truncate" id="kpiExpenseTopCat">主要開銷統計中</p>
           </div>
 
           <!-- 4. 時數 -->
-          <div class="bg-white p-4.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-            <div class="text-xs font-medium text-slate-500 mb-1">本月工時 / 堂數</div>
-            <div class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight" id="kpiTotalHours">0 <span class="text-xs font-normal text-slate-400">小時</span></div>
-            <p class="text-[11px] text-slate-400 mt-1.5" id="kpiTutoringShare">家教佔比 0%</p>
+          <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="text-xs font-medium text-slate-500 mb-2">本月教學/工時</div>
+            <div class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight" id="kpiTotalHours">0 <span class="text-xs font-normal text-slate-400">小時/堂</span></div>
+            <p class="text-[11px] text-slate-400 mt-1" id="kpiTutoringShare">各項目運作中</p>
           </div>
 
           <!-- 5. 淨存入 -->
-          <div class="bg-white p-4.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-            <div class="text-xs font-medium text-slate-500 mb-1">本月實質淨存入</div>
-            <div class="text-xl md:text-2xl font-bold text-emerald-600 font-mono tracking-tight" id="kpiNetProfit">NT$ 0</div>
-            <p class="text-[11px] text-slate-400 mt-1.5">實收進帳扣除支出</p>
+          <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="text-xs font-medium text-slate-500 mb-2">本月實質淨存入</div>
+            <div class="text-xl md:text-2xl font-bold text-emerald-600 tracking-tight" id="kpiNetProfit">NT$ 0</div>
+            <p class="text-[11px] text-slate-400 mt-1">實收扣除生活支出</p>
           </div>
 
           <!-- 6. 活躍學生 -->
-          <div class="bg-white p-4.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
-            <div class="text-xs font-medium text-slate-500 mb-1">活躍在教學員</div>
+          <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="text-xs font-medium text-slate-500 mb-2">活躍在教學員</div>
             <div class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight" id="kpiActiveStudents">0 <span class="text-xs font-normal text-slate-400">位</span></div>
-            <p class="text-[11px] text-slate-400 mt-1.5 flex items-center justify-between">
-              <span>週估算</span>
-              <span class="font-medium text-slate-700 font-mono" id="kpiEstWeekly">NT$ 0</span>
+            <p class="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+              <span>預估固定週收</span>
+              <span class="font-medium text-slate-700" id="kpiEstWeekly">NT$ 0</span>
             </p>
           </div>
         </div>
@@ -1193,7 +1195,7 @@
     function updateKPISummaries() {
       const currentMonth = new Date().toISOString().substring(0, 7);
       const monthRecords = records.filter(r => r.date && r.date.startsWith(currentMonth));
-      const monthExpenses = expenses.filter(e => e.date && e.date.startsWith(currentMonth));
+      const monthExpenses = (typeof expenses !== 'undefined') ? expenses.filter(e => e.date && e.date.startsWith(currentMonth)) : [];
       
       const totalGross = monthRecords.reduce((sum, r) => r.status !== 'cancelled' ? sum + Number(r.amount || 0) : sum, 0);
       const totalPaid = monthRecords.reduce((sum, r) => r.status === 'paid' ? sum + Number(r.amount || 0) : sum, 0);
@@ -1204,45 +1206,41 @@
       const netProfit = totalPaid - totalExpense;
 
       const monthHours = monthRecords.reduce((sum, r) => {
-        if (r.status !== 'cancelled' && (r.category === 'tutoring' || r.hours)) return sum + Number(r.hours || 0);
+        if (r.status !== 'cancelled') {
+          return sum + (Number(r.hours || r.units || 0));
+        }
         return sum;
       }, 0);
 
-      const tutorHours = monthRecords.filter(r => r.category === 'tutoring' && r.status !== 'cancelled').reduce((sum, r) => sum + Number(r.hours || 0), 0);
-      const tutorShare = monthHours > 0 ? Math.round((tutorHours / monthHours) * 100) : 0;
-
       const paidPercent = totalGross > 0 ? Math.round((totalPaid / totalGross) * 100) : 0;
+
       const activeStudentsList = students.filter(s => s.active);
       const activeSwimList = swimStudents.filter(s => s.active);
       const totalActiveCount = activeStudentsList.length + activeSwimList.length;
+
       const estWeekly = activeStudentsList.reduce((sum, s) => sum + (Number(s.hourlyRate || 0) * Number(s.defaultHours || 0)), 0);
 
+      // 更新畫面 6 格
       document.getElementById('kpiMonthGross').textContent = `NT$ ${totalGross.toLocaleString()}`;
       document.getElementById('kpiPaidPercent').textContent = `${paidPercent}%`;
       document.getElementById('kpiUnpaidGross').textContent = `NT$ ${totalUnpaid.toLocaleString()}`;
-      document.getElementById('kpiUnpaidCount').textContent = `${unpaidCount} 筆待入帳款項`;
+      document.getElementById('kpiUnpaidCount').textContent = `${unpaidCount} 筆款項尚未入帳`;
       document.getElementById('kpiMonthExpense').textContent = `NT$ ${totalExpense.toLocaleString()}`;
-      document.getElementById('kpiTotalHours').innerHTML = `${monthHours.toFixed(1)} <span class="text-xs font-normal text-slate-400">小時</span>`;
-      document.getElementById('kpiTutoringShare').textContent = `家教佔比 ${tutorShare}%`;
+      document.getElementById('kpiTotalHours').innerHTML = `${monthHours.toFixed(1)} <span class="text-xs font-normal text-slate-400">小時/堂</span>`;
       document.getElementById('kpiNetProfit').textContent = `NT$ ${netProfit.toLocaleString()}`;
       document.getElementById('kpiActiveStudents').innerHTML = `${totalActiveCount} <span class="text-xs font-normal text-slate-400">位</span>`;
       document.getElementById('kpiEstWeekly').textContent = `NT$ ${estWeekly.toLocaleString()}`;
 
-      document.getElementById('sidebarNetProfit').textContent = `NT$ ${netProfit.toLocaleString()}`;
-      document.getElementById('sidebarUnpaid').textContent = `NT$ ${totalUnpaid.toLocaleString()}`;
-
-      const catSums = {};
-      monthExpenses.forEach(e => { catSums[e.category] = (catSums[e.category] || 0) + Number(e.amount || 0); });
-      const topCat = Object.entries(catSums).sort((a,b) => b[1] - a[1])[0];
-      if (topCat) {
-        const cfg = EXPENSE_CATEGORIES[topCat[0]] || EXPENSE_CATEGORIES['bills'];
-        document.getElementById('kpiExpenseTopCat').textContent = `主要：${cfg.name} (NT$ ${topCat[1].toLocaleString()})`;
-      } else {
-        document.getElementById('kpiExpenseTopCat').textContent = '本月尚無開銷';
-      }
+      // 側邊欄同步
+      const sideGross = document.getElementById('sidebarTotalGross');
+      if (sideGross) sideGross.textContent = `NT$ ${totalGross.toLocaleString()}`;
+      const sideNet = document.getElementById('sidebarNetProfit');
+      if (sideNet) sideNet.textContent = `NT$ ${netProfit.toLocaleString()}`;
+      const sideUnpaid = document.getElementById('sidebarUnpaid');
+      if (sideUnpaid) sideUnpaid.textContent = `NT$ ${totalUnpaid.toLocaleString()}`;
 
       const monthBadge = document.getElementById('currentMonthBadge');
-      if (monthBadge) monthBadge.textContent = `${currentMonth} 結算中`;
+      if (monthBadge) monthBadge.textContent = `${currentMonth} 月度結算中`;
     }
 
     function renderQuickStudentCards() {
